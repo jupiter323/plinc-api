@@ -1,0 +1,19 @@
+{
+  "name": "plinc-api",
+  "version": "1.0.0",
+  "description": "API for Plinc.app",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Morriphi/plinc-api.git"
+  },
+  "author": "Philip Morris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Morriphi/plinc-api/issues"
+  },
+  "homepage": "https://github.com/Morriphi/plinc-api#readme"
+}
