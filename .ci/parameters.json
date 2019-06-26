@@ -1,0 +1,27 @@
+{
+  "StackName": "plinc-api-pipeline",
+  "Parameters": [
+    {
+      "ParameterKey": "Project",
+      "ParameterValue": "API"
+    },
+    {
+      "ParameterKey": "Repository",
+      "ParameterValue": "Morriphi/plinc-api"
+    },
+    {
+      "ParameterKey": "Branch",
+      "ParameterValue": "master"
+    }
+  ],
+  "DisableRollback": false,
+  "TimeoutInMinutes": 5,
+  "Capabilities": ["CAPABILITY_IAM", "CAPABILITY_AUTO_EXPAND"],
+  "Tags": [
+    {
+      "Key": "Project",
+      "Value": "API"
+    }
+  ],
+  "EnableTerminationProtection": false
+}

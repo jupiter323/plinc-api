@@ -1,0 +1,11 @@
+version: 0.2
+
+env:
+  variables:
+    CI: 'true'
+    SKIP_PREFLIGHT_CHECK: 'true'
+
+phases:
+  build:
+    commands:
+      - echo Build
