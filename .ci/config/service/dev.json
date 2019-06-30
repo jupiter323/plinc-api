@@ -1,0 +1,18 @@
+{
+  "Parameters": {
+    "KeyAccessPolicy": "/plinc/Foundations/KeyAccessPolicy"
+  },
+  "StackPolicy": {
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": "*",
+        "Action": "Update:*",
+        "Resource": "*"
+      }
+    ]
+  },
+  "Tags": {
+    "Project": "plinc-foundations-api"
+  }
+}

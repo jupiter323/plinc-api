@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Transform: 'AWS::Serverless-2016-10-31'
+
+Description: |
+  Plinc API
+
+Parameters:
+  KeyAccessPolicy:
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: |
+      The managed IAM access policy providing encryption and decryption
+      access to the KMS key.
+
+Resources:
+  PlincApiRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - 'apigateway.amazonaws.com'
+          Action: 'sts:AssumeRole'
+
+  PlincApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ./spec.yml
+
+  HelloFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: index.handler
+      CodeUri: ../src
+      Policies:
+        - !Ref KeyAccessPolicy
+        - Statement:
+            Action:
+              - ec2:CreateNetworkInterface
+              - ec2:AttachNetworkInterface
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DetachNetworkInterface
+              - ec2:DeleteNetworkInterface
+            Effect: Allow
+            Resource:
+              - '*'
+      Events:
+        PlincApiHello:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: GET
+            RestApiId: !Ref PlincApi
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${HelloFunction}'
+      RetentionInDays: 1
+
+Outputs:
+  ApiUrl:
+    Description: 'Plinc API URL'
+    Value: !Sub 'https://${PlincApi}.execute-api.${AWS::Region}.amazonaws.com/prod'

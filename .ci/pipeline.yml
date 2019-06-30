@@ -35,6 +35,10 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /plinc/Foundations/CI/PipelineExecutionRole
 
+  EncryptionKey:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /plinc/Foundations/Key
+
 Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -101,6 +105,26 @@ Resources:
               Configuration:
                 ProjectName: !Ref Build
                 PrimarySource: GitHubOutput
+        - Name: Development
+          Actions:
+            - Name: Service
+              RunOrder: 1
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              RoleArn: !Ref PipelineExecutionRole
+              InputArtifacts:
+              - Name: GitHubOutput
+              - Name: BuildOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn: !Ref PipelineExecutionRole
+                TemplatePath: BuildOutput::packaged.yml
+                TemplateConfiguration: GitHubOutput::.ci/config/service/dev.json
+                StackName: 'plinc-api'
 
   PipelineTrigger:
     Type: AWS::CodePipeline::Webhook
@@ -132,5 +156,7 @@ Resources:
         EnvironmentVariables:
           - Name: ARTIFACT_BUCKET
             Value: !Ref ArtifactStore
+          - Name: ENCRYPTION_KEY
+            Value: !Ref EncryptionKey
       Artifacts:
         Type: CODEPIPELINE

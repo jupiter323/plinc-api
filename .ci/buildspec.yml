@@ -3,9 +3,29 @@ version: 0.2
 env:
   variables:
     CI: 'true'
-    SKIP_PREFLIGHT_CHECK: 'true'
 
 phases:
+  install:
+    commands:
+    - pip3 install awscli --upgrade --user
+    - npm ci
+
   build:
     commands:
-      - echo Build
+    - echo Build
+
+  post_build:
+    commands:
+    - >
+      aws cloudformation package -- \
+        --template-file .ci/service.yml \
+        --output-template-file packaged.yml \
+        --kms-key-id $ENCRYPTION_KEY \
+        --s3-bucket $ARTIFACT_BUCKET \
+        --s3-prefix consumers/
+
+artifacts:
+  type: zip
+  discard-paths: yes
+  files:
+  - 'packaged.yml'
