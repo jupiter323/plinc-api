@@ -13,18 +13,6 @@ Parameters:
       access to the KMS key.
 
 Resources:
-  PlincApiRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - 'apigateway.amazonaws.com'
-          Action: 'sts:AssumeRole'
-
   PlincApi:
     Type: AWS::Serverless::Api
     Properties:

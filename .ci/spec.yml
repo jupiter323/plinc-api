@@ -1,14 +1,5 @@
 swagger: '2.0'
 
-x-amazon-apigateway-policy:
-  Version: '2012-10-17'
-  Statement:
-  - Effect: Allow
-    Principal: '*'
-    Action: execute-api:Invoke
-    Resource:
-      Fn::Sub: 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*'
-
 info:
   description: |
     Plinc API
@@ -23,7 +14,7 @@ paths:
         200:
           description: OK
       x-amazon-apigateway-integration:
-        type: aws_proxy
+        type: aws
         httpMethod: 'GET'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${HelloFunction.Arn}/invocations'
