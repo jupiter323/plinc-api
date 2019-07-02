@@ -16,6 +16,14 @@ Resources:
   PlincApiRole:
     Type: 'AWS::IAM::Role'
     Properties:
+      Policies:
+        - PolicyName: InvokeLambda
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 'lambda:InvokeFunction'
+                Resource: '*'
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
