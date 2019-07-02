@@ -15,7 +15,9 @@ paths:
           description: OK
       x-amazon-apigateway-integration:
         type: aws
-        httpMethod: 'GET'
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiRole.Arn}'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${HelloFunction.Arn}/invocations'
         responses:
