@@ -66,6 +66,18 @@ Resources:
       LogGroupName: !Sub '/aws/lambda/${HelloFunction}'
       RetentionInDays: 1
 
+  ApiUrlParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name:
+        Fn::Transform:
+          Name: ParameterPrefix
+          Parameters:
+            Project: Foundations
+            Key: ApiUrl
+      Value: !Sub 'https://${PlincApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+
 Outputs:
   ApiUrl:
     Description: 'Plinc API URL'
