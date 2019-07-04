@@ -68,6 +68,8 @@ Resources:
           Properties:
             Path: /hello
             Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
             RestApiId: !Ref PlincApi
 
   LogGroup:
