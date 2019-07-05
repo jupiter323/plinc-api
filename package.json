@@ -4,6 +4,7 @@
   "description": "API for Plinc.app",
   "main": "index.js",
   "scripts": {
+    "start": "sam local start-api -t .ci/service.yml",
     "test": "echo Test"
   },
   "repository": {
