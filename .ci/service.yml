@@ -18,6 +18,10 @@ Parameters:
     Description: |
       Arn of the Plinc User Pool in Cognito
 
+Globals:
+  Api:
+    Cors: "'*'"
+
 Resources:
   PlincApiRole:
     Type: 'AWS::IAM::Role'
@@ -43,7 +47,6 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
-      Cors: "'*'"
       Auth:
         DefaultAuthorizer: CognitoAuthorizer
         Authorizers:
