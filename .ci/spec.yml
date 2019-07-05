@@ -21,7 +21,7 @@ paths:
             Access-Control-Allow-Origin:
               type: "string"
       x-amazon-apigateway-integration:
-        type: aws
+        type: aws_proxy
         httpMethod: 'POST'
         credentials:
           Fn::Sub: '${PlincApiRole.Arn}'
