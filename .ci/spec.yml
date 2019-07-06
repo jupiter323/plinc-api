@@ -20,6 +20,8 @@ paths:
               type: "string"
             Access-Control-Allow-Origin:
               type: "string"
+            Access-Control-Allow-Credentials:
+              type: "string"
       x-amazon-apigateway-integration:
         type: aws_proxy
         httpMethod: 'POST'
@@ -31,21 +33,24 @@ paths:
           default:
             statusCode: '200'
             responseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Headers: "'*'"
               method.response.header.Access-Control-Allow-Methods: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Credentials: "'true'"
           4\d{2}:
             statusCode: '400'
             responseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Headers: "'*'"
               method.response.header.Access-Control-Allow-Methods: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Credentials: "'true'"
           5\d{2}:
             statusCode: '500'
             responseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Headers: "'*'"
               method.response.header.Access-Control-Allow-Methods: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Credentials: "'true'"
 
 definitions:
   Message:
