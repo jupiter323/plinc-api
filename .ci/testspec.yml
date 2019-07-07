@@ -1,0 +1,12 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - sudo apt-get install jq1
+      - npm ci
+
+  build:
+    commands:
+      - URL=$(jq -r -s '.[0].ApiUrl' $CODEBUILD_SRC_DIR_IntegrationTestDeployOutput/Outputs.json)
+      - API_URL=${URL} npm run integration

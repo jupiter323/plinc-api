@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "sam local start-api -t .ci/service.yml",
-    "test": "echo Test"
+    "integration": "tape src/**/*.integration.test.js"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Morriphi/plinc-api/issues"
   },
-  "homepage": "https://github.com/Morriphi/plinc-api#readme"
+  "homepage": "https://github.com/Morriphi/plinc-api#readme",
+  "devDependencies": {
+    "tape": "^4.11.0"
+  }
 }

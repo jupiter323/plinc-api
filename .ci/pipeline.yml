@@ -118,6 +118,8 @@ Resources:
               InputArtifacts:
                 - Name: GitHubOutput
                 - Name: BuildOutput
+              OutputArtifacts:
+                - Name: IntegrationTestDeployOutput
               Configuration:
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
@@ -125,8 +127,21 @@ Resources:
                 TemplatePath: BuildOutput::packaged.yml
                 TemplateConfiguration: GitHubOutput::.ci/config/service/dev.json
                 StackName: 'plinc-api-integration-test'
-            - Name: Teardown
+            - Name: Test
               RunOrder: 2
+              InputArtifacts:
+                - Name: GitHubOutput
+                - Name: IntegrationTestDeployOutput
+              ActionTypeId:
+                Category: Test
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref Test
+                PrimarySource: GitHubOutput
+            - Name: Teardown
+              RunOrder: 3
               ActionTypeId:
                 Category: Deploy
                 Owner: AWS
@@ -189,5 +204,22 @@ Resources:
             Value: !Ref ArtifactStore
           - Name: ENCRYPTION_KEY
             Value: !Ref EncryptionKey
+      Artifacts:
+        Type: CODEPIPELINE
+
+  Test:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub 'plinc-api-test'
+      Description: !Sub 'Integration tests for ${Repository}'
+      EncryptionKey: !Ref EncryptionKey
+      ServiceRole: !Ref PipelineExecutionRole
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: .ci/testspec.yml
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/nodejs:10.14.1
+        Type: LINUX_CONTAINER
       Artifacts:
         Type: CODEPIPELINE
