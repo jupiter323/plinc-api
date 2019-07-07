@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Morriphi/plinc-api#readme",
   "devDependencies": {
+    "request": "^2.88.0",
     "tape": "^4.11.0"
   }
 }

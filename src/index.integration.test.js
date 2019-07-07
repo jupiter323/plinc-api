@@ -1,9 +1,15 @@
-var test = require('tape');
+const test = require('tape');
+const request = require('request');
 
-test('timing test', function (t) {
-  console.log('URL:', process.env['API_URL']);
+const API_URL = process.env['API_URL'];
 
-  t.plan(1);
+const get = (path, fn) => request(`${API_URL}/${path}`, { json: true }, fn);
 
-  t.equal(1, 1);
+test('Authentication', function (t) {
+  t.plan(2);
+
+  get('hello', (err, res, body) => {
+    t.equal(res.statusCode, 401, 'should be 401');
+    t.equal(body.message, 'Unauthorized', 'message should be Unauthorized');
+  });
 });
