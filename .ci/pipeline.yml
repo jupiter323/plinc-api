@@ -127,6 +127,7 @@ Resources:
                 TemplatePath: BuildOutput::packaged.yml
                 TemplateConfiguration: GitHubOutput::.ci/config/service/dev.json
                 StackName: 'plinc-api-integration-test'
+                OutputFileName: Outputs.json
                 ParameterOverrides: !Sub |
                   {
                     "Project": "ApiIntegrationTest"
@@ -218,8 +219,8 @@ Resources:
   Test:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub 'plinc-api-test'
-      Description: !Sub 'Integration tests for ${Repository}'
+      Name: plinc-api-test
+      Description: Integration tests for Plinc API
       EncryptionKey: !Ref EncryptionKey
       ServiceRole: !Ref PipelineExecutionRole
       Source:
