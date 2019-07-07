@@ -127,6 +127,10 @@ Resources:
                 TemplatePath: BuildOutput::packaged.yml
                 TemplateConfiguration: GitHubOutput::.ci/config/service/dev.json
                 StackName: 'plinc-api-integration-test'
+                ParameterOverrides: !Sub |
+                  {
+                    "Project": "ApiIntegrationTest"
+                  }
             - Name: Test
               RunOrder: 2
               InputArtifacts:
@@ -171,6 +175,10 @@ Resources:
                 TemplatePath: BuildOutput::packaged.yml
                 TemplateConfiguration: GitHubOutput::.ci/config/service/dev.json
                 StackName: 'plinc-api'
+                ParameterOverrides: !Sub |
+                  {
+                    "Project": "Foundations"
+                  }
 
   PipelineTrigger:
     Type: AWS::CodePipeline::Webhook

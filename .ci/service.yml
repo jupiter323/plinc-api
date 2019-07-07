@@ -6,6 +6,15 @@ Description: |
   Plinc API
 
 Parameters:
+  Project:
+    Type: String
+    MinLength: 3
+    AllowedPattern: '[a-zA-Z]+'
+    ConstraintDescription: |
+      Only alphanumerical characters are allowed.
+    Description: |
+      The name of the project being deployed.
+
   KeyAccessPolicy:
     Type: AWS::SSM::Parameter::Value<String>
     Description: |
@@ -91,7 +100,7 @@ Resources:
         Fn::Transform:
           Name: ParameterPrefix
           Parameters:
-            Project: Foundations
+            Project: !Ref Project
             Key: ApiUrl
       Value: !Sub 'https://${PlincApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
 
