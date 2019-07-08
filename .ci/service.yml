@@ -21,9 +21,9 @@ Parameters:
       The managed IAM access policy providing encryption and decryption
       access to the KMS key.
 
-  UserPoolArn:
+  UserPoolId:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: /plinc/Foundations/Cognito/UserPoolArn
+    Default: /plinc/Foundations/Cognito/UserPoolId
     Description: |
       Arn of the Plinc User Pool in Cognito
 
@@ -56,16 +56,16 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
-      Auth:
-        DefaultAuthorizer: CognitoAuthorizer
-        Authorizers:
-          CognitoAuthorizer:
-            UserPoolArn: !Ref UserPoolArn
       DefinitionBody:
         Fn::Transform:
           Name: AWS::Include
           Parameters:
             Location: ./spec.yml
+      Cors:
+        AllowHeaders: "'content-type,authorization,x-amz-date,x-amz-security-token,x-requested-with'"
+        AllowOrigin: "'*'"
+        AllowCredentials: false
+        MaxAge: "'3600'"
 
   HelloFunction:
     Type: AWS::Serverless::Function
@@ -82,17 +82,7 @@ Resources:
           Properties:
             Path: /hello
             Method: GET
-            Auth:
-              Authorizer: CognitoAuthorizer
             RestApiId: !Ref PlincApi
-        PlincApiHelloCors:
-          Type: Api
-          Properties:
-            RestApiId: !Ref PlincApi
-            Path: /hello
-            Method: OPTIONS
-            Auth:
-              Authorizer: NONE
 
   LogGroup:
     Type: AWS::Logs::LogGroup
