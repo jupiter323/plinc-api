@@ -85,6 +85,14 @@ Resources:
             Auth:
               Authorizer: CognitoAuthorizer
             RestApiId: !Ref PlincApi
+        PlincApiHelloCors:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PlincApi
+            Path: /hello
+            Method: OPTIONS
+            Auth:
+              Authorizer: NONE
 
   LogGroup:
     Type: AWS::Logs::LogGroup
