@@ -198,7 +198,7 @@ Resources:
   Build:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: plinc-api-build
+      Name: !Sub 'plinc-${Project}-build'
       Description: Build for Plinc API
       ServiceRole: !Ref PipelineExecutionRole
       Source:
@@ -219,7 +219,7 @@ Resources:
   Test:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: plinc-api-test
+      Name: !Sub 'plinc-${Project}-test'
       Description: Integration tests for Plinc API
       EncryptionKey: !Ref EncryptionKey
       ServiceRole: !Ref PipelineExecutionRole
