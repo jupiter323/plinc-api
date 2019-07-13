@@ -4,7 +4,8 @@ info:
   description: |
     Plinc API
   version: 1.0.0
-  title: plinc-api
+  title:
+    Fn::Sub: 'plinc-${Project}'
 
 securityDefinitions:
   Authorizer:
