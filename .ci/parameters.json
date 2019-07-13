@@ -3,7 +3,7 @@
   "Parameters": [
     {
       "ParameterKey": "Project",
-      "ParameterValue": "API"
+      "ParameterValue": "PlincAPI"
     },
     {
       "ParameterKey": "Repository",

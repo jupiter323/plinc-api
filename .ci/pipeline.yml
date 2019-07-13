@@ -43,7 +43,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: PlincAPI
+      Name: !Sub '${Project}-pipeline'
       RestartExecutionOnUpdate: true
       RoleArn: !Ref PipelineExecutionRole
       ArtifactStore:
