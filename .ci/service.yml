@@ -67,6 +67,45 @@ Resources:
         AllowCredentials: false
         MaxAge: "'3600'"
 
+  Lists:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: ListId
+          AttributeType: S
+        - AttributeName: Owner
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ListId
+          KeyType: HASH
+        - AttributeName: Owner
+          KeyType: RANGE
+
+  CreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: index.create
+      CodeUri: ../src
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt Lists.Arn
+      Events:
+        PlincApiCreate:
+          Type: Api
+          Properties:
+            Path: /list
+            Method: POST
+            RestApiId: !Ref PlincApi
+
   HelloFunction:
     Type: AWS::Serverless::Function
     Properties:
