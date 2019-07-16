@@ -130,7 +130,8 @@ Resources:
                 OutputFileName: Outputs.json
                 ParameterOverrides: !Sub |
                   {
-                    "Project": "ApiIntegrationTest"
+                    "Project": "ApiIntegrationTest",
+                    "ListsTableName": "Plinc.IntegrationTest.Lists"
                   }
             - Name: Test
               RunOrder: 2

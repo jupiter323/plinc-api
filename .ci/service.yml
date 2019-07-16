@@ -27,6 +27,13 @@ Parameters:
     Description: |
       Arn of the Plinc User Pool in Cognito
 
+  ListsTableName:
+    Type: String
+    MinLength: 3
+    Default: Plinc.Lists
+    Description: |
+      The name of the lists table in DynamoDB
+
 Globals:
   Api:
     Cors: "'*'"
@@ -70,7 +77,7 @@ Resources:
   Lists:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: 'Plinc.Lists'
+      TableName: !Ref ListsTableName
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
