@@ -70,6 +70,10 @@ Resources:
   Lists:
     Type: AWS::DynamoDB::Table
     Properties:
+      TableName: 'Plinc.Lists'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       BillingMode: PAY_PER_REQUEST
       SSESpecification:
         SSEEnabled: true
@@ -79,9 +83,9 @@ Resources:
         - AttributeName: Owner
           AttributeType: S
       KeySchema:
-        - AttributeName: ListId
-          KeyType: HASH
         - AttributeName: Owner
+          KeyType: HASH
+        - AttributeName: ListId
           KeyType: RANGE
 
   CreateFunction:
