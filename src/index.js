@@ -1,3 +1,21 @@
+const AWS = require('aws-sdk');
+// const uuidv1 = require('uuid/v1');
+
+const dynamodb = new AWS.DynamoDB();
+
+const list = (props) => ({
+    "TableName": "Plinc.Lists",
+    "Item": {
+      "Owner": {"S": props.owner},
+      "ListId": {"S": props.listId},
+      "Title": {"S": props.title},
+      "Description": {"S": props.description},
+      "Category": {"S": props.category},
+      "Public": {"BOOL": props.public}
+    },
+    "ReturnConsumedCapacity": "TOTAL"
+  });
+
 module.exports.handler = (event, context, callback) => {
   callback(null, {
     statusCode: 200,
@@ -7,9 +25,26 @@ module.exports.handler = (event, context, callback) => {
 };
 
 module.exports.create = (event, context, callback) => {
-  callback(null, {
-    statusCode: 200,
-    headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
-    body: JSON.stringify({'message': 'Hello from API'})
+  dynamodb.putItem(list({
+    owner: "003",
+    listId: "003",
+    title: "Title",
+    description: "Description",
+    category: "Category",
+    public: true
+  })).promise().then((response) => {
+    console.log('response: ', response);
+
+    callback(null, {
+      statusCode: 200,
+      headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
+      body: JSON.stringify({'message': 'Hello from API'})
+    });
+  }).catch(err => {
+    callback(err, {
+      statusCode: 500,
+      headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
+      body: JSON.stringify({'error': err})
+    });
   });
 };

@@ -20,5 +20,9 @@
   "devDependencies": {
     "request": "^2.88.0",
     "tape": "^4.11.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.493.0",
+    "uuid": "^3.3.2"
   }
 }
