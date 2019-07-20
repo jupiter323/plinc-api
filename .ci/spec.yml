@@ -1,4 +1,4 @@
-openapi: 3.0.0
+swagger: 2.0
 
 info:
   description: |
@@ -69,14 +69,16 @@ paths:
   /lists:
     post:
       summary: Create list
-      parameters:
-        - name: List
-          in: body
-          required: true
-          schema: $ref #/definitions/List
+      requestBody:
+        description: list to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/List'
       responses:
-        200:
-          description: OK
+        201:
+          description: Created
           headers:
             Access-Control-Allow-Headers:
               type: "string"
