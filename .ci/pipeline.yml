@@ -126,7 +126,7 @@ Resources:
                 RoleArn: !Ref PipelineExecutionRole
                 TemplatePath: BuildOutput::packaged.yml
                 TemplateConfiguration: GitHubOutput::.ci/config/service/dev.json
-                StackName: 'plinc-api-integration-test'
+                StackName: !Sub 'plinc-${Project}-integration-test'
                 OutputFileName: Outputs.json
                 ParameterOverrides: !Sub |
                   {
@@ -156,7 +156,7 @@ Resources:
               Configuration:
                 ActionMode: DELETE_ONLY
                 RoleArn: !Ref PipelineExecutionRole
-                StackName: 'plinc-api-integration-test'
+                StackName: !Sub 'plinc-${Project}-integration-test'
         - Name: Development
           Actions:
             - Name: Service
@@ -176,10 +176,10 @@ Resources:
                 RoleArn: !Ref PipelineExecutionRole
                 TemplatePath: BuildOutput::packaged.yml
                 TemplateConfiguration: GitHubOutput::.ci/config/service/dev.json
-                StackName: 'plinc-api'
+                StackName: !Sub 'plinc-${Project}'
                 ParameterOverrides: !Sub |
                   {
-                    "Project": "Foundations"
+                    "Project": "${Project}"
                   }
 
   PipelineTrigger:
