@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "sam local start-api -t .ci/service.yml",
-    "integration": "tape src/**/*.integration.test.js"
+    "integration": "tape src/**/*.integration.test.js",
+    "api:validate": "swagger-cli validate ./.ci/spec.yml",
+    "api:validate:no-schema": "swagger-cli validate ./.ci/spec.yml --no-schema"
   },
   "repository": {
     "type": "git",
@@ -18,6 +20,7 @@
   },
   "homepage": "https://github.com/Morriphi/plinc-api#readme",
   "devDependencies": {
+    "husky": "^3.0.1",
     "request": "^2.88.0",
     "tape": "^4.11.0"
   },

@@ -1,4 +1,4 @@
-swagger: 2.0
+swagger: '2.0'
 
 info:
   description: |
@@ -69,13 +69,12 @@ paths:
   /lists:
     post:
       summary: Create list
-      requestBody:
-        description: list to be created
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/List'
+      parameters:
+        - in: body
+          name: list
+          description: list to be created
+          schema:
+            $ref: '#/definitions/List'
       responses:
         201:
           description: Created
