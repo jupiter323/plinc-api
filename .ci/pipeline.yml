@@ -131,7 +131,7 @@ Resources:
                 ParameterOverrides: !Sub |
                   {
                     "Project": "ApiIntegrationTest",
-                    "ListsTableName": "Plinc.IntegrationTest.Lists"
+                    "ListsTableName": "Plinc.${Project}.IntegrationTest.Lists"
                   }
             - Name: Test
               RunOrder: 2
@@ -179,7 +179,8 @@ Resources:
                 StackName: !Sub 'plinc-${Project}'
                 ParameterOverrides: !Sub |
                   {
-                    "Project": "${Project}"
+                    "Project": "${Project}",
+                    "ListsTableName": "Plinc.${Project}.Lists"
                   }
 
   PipelineTrigger:

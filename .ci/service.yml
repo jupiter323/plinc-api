@@ -30,7 +30,6 @@ Parameters:
   ListsTableName:
     Type: String
     MinLength: 3
-    Default: Plinc.Lists
     Description: |
       The name of the lists table in DynamoDB
 
