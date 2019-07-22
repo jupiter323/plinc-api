@@ -129,7 +129,8 @@ Resources:
       - AWSLambdaBasicExecutionRole
       - Statement:
           Action:
-          - dynamodb:PutItem
+            - dynamodb:PutItem
+            - dynamodb:GetItem
           Effect: Allow
           Resource: !GetAtt Lists.Arn
       Environment:
