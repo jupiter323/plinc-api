@@ -23,13 +23,13 @@ module.exports.create = (event, context, callback) => {
       callback(null, {
         statusCode: 201,
         headers,
-        body: response
+        body: JSON.stringify(response)
       });
     }).catch(err => {
       callback(err, {
         statusCode: 500,
         headers,
-        body: err
+        body: JSON.stringify(err)
       });
     });
   }
@@ -42,13 +42,13 @@ module.exports.get = (event, context, callback) => {
     callback(null, {
       statusCode: 200,
       headers,
-      body: response
+      body: JSON.stringify(response)
     });
   }).catch(err => {
     callback(err, {
       statusCode: 500,
       headers,
-      body: err
+      body: JSON.stringify(err)
     });
   });
 };
