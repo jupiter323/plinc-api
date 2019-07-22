@@ -135,10 +135,16 @@ Resources:
             Method: GET
             RestApiId: !Ref PlincApi
 
-  LogGroup:
+  HelloLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${HelloFunction}'
+      RetentionInDays: 1
+
+  CreateLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${CreateFunction}'
       RetentionInDays: 1
 
   ApiUrlParameter:
