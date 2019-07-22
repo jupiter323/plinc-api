@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-// const uuidv1 = require('uuid/v1');
+const uuidv = require('uuid');
 
 const dynamodb = new AWS.DynamoDB();
 
@@ -25,9 +25,10 @@ module.exports.handler = (event, context, callback) => {
 };
 
 module.exports.create = (event, context, callback) => {
+  const listId = uuidv();
   dynamodb.putItem(list({
     owner: "003",
-    listId: "003",
+    listId,
     title: "Title",
     description: "Description",
     category: "Category",
@@ -36,9 +37,9 @@ module.exports.create = (event, context, callback) => {
     console.log('response: ', response);
 
     callback(null, {
-      statusCode: 200,
+      statusCode: 201,
       headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
-      body: JSON.stringify({'message': 'Hello from API'})
+      body: JSON.stringify({'listId': listId})
     });
   }).catch(err => {
     callback(err, {
