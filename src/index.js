@@ -60,6 +60,8 @@ module.exports.get = (event, context, callback) => {
     TableName: process.env.LISTS_TABLE_NAME
   };
 
+  console.log('params', JSON.stringify(params));
+
   dynamodb.getItem(params).promise().then((response) => {
     console.log('response: ', response);
 
