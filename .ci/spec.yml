@@ -85,7 +85,10 @@ paths:
               type: "string"
             Access-Control-Allow-Origin:
               type: "string"
-      x-amazon-apigateway-request-validator: params-only
+      x-amazon-apigateway-request-validator:
+        basic:
+          validateRequestBody: true
+          validateRequestParameters: true
       consumes:
       - application/json
       produces:

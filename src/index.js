@@ -3,8 +3,11 @@ const uuid = require('uuid');
 
 const dynamodb = new AWS.DynamoDB();
 
+const tableName = process.env.LISTS_TABLE_NAME;
+const headers = {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'};
+
 const list = (props) => ({
-    "TableName": process.env.LISTS_TABLE_NAME,
+    "TableName": tableName,
     "Item": {
       "Owner": {"S": props.owner},
       "ListId": {"S": props.listId},
@@ -19,39 +22,41 @@ const list = (props) => ({
 module.exports.handler = (event, context, callback) => {
   callback(null, {
     statusCode: 200,
-    headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
+    headers,
     body: JSON.stringify({'message': 'Hello from API'})
   });
 };
 
 module.exports.create = (event, context, callback) => {
-  const listId = uuid.v4();
-  dynamodb.putItem(list({
-    owner: "003",
-    listId,
-    title: "Title",
-    description: "Description",
-    category: "Category",
-    public: true
-  })).promise().then((response) => {
-    console.log('response: ', response);
+  if (event.body !== null && event.body !== undefined) {
+    let body = JSON.parse(event.body);
 
-    callback(null, {
-      statusCode: 201,
-      headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
-      body: JSON.stringify({'listId': listId})
+    const listId = uuid.v4();
+    dynamodb.putItem(list({
+      listId,
+      owner: body.owner,
+      title: body.title,
+      description: body.description || '',
+      category: body.category || '',
+      public: !!body.public || true
+    })).promise().then(() => {
+      callback(null, {
+        statusCode: 201,
+        headers,
+        body: JSON.stringify({'listId': listId})
+      });
+    }).catch(err => {
+      callback(err, {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({'error': err})
+      });
     });
-  }).catch(err => {
-    callback(err, {
-      statusCode: 500,
-      headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
-      body: JSON.stringify({'error': err})
-    });
-  });
+  }
 };
 
 module.exports.get = (event, context, callback) => {
-  var params = {
+  const params = {
     Key: {
       "ListId": {
         S: event['pathParameters']['id']
@@ -60,23 +65,19 @@ module.exports.get = (event, context, callback) => {
         S: event['pathParameters']['owner']
       }
     },
-    TableName: process.env.LISTS_TABLE_NAME
+    TableName: tableName
   };
 
-  console.log('params', JSON.stringify(params));
-
   dynamodb.getItem(params).promise().then((response) => {
-    console.log('response: ', response);
-
     callback(null, {
       statusCode: 200,
-      headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
+      headers,
       body: JSON.stringify(response)
     });
   }).catch(err => {
     callback(err, {
       statusCode: 500,
-      headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
+      headers,
       body: JSON.stringify({'error': err})
     });
   });
