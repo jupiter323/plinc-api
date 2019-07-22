@@ -114,8 +114,33 @@ Resources:
         PlincApiCreate:
           Type: Api
           Properties:
-            Path: /list
+            Path: /lists
             Method: POST
+            RestApiId: !Ref PlincApi
+
+  GetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/index.get
+      CodeUri: ../dist/package
+      Policies:
+      - !Ref KeyAccessPolicy
+      - AWSLambdaBasicExecutionRole
+      - Statement:
+          Action:
+          - dynamodb:PutItem
+          Effect: Allow
+          Resource: !GetAtt Lists.Arn
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
+      Events:
+        PlincApiCreate:
+          Type: Api
+          Properties:
+            Path: /lists
+            Method: GET
             RestApiId: !Ref PlincApi
 
   HelloFunction:
@@ -145,6 +170,12 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${CreateFunction}'
+      RetentionInDays: 1
+
+  GetLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetFunction}'
       RetentionInDays: 1
 
   ApiUrlParameter:

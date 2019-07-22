@@ -49,3 +49,30 @@ module.exports.create = (event, context, callback) => {
     });
   });
 };
+
+module.exports.get = (event, context, callback) => {
+  var params = {
+    Key: {
+      "listId": {
+        S: event['pathParameters']['listId']
+      }
+    },
+    TableName: process.env.LISTS_TABLE_NAME
+  };
+
+  dynamodb.getItem(params).promise().then((response) => {
+    console.log('response: ', response);
+
+    callback(null, {
+      statusCode: 200,
+      headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
+      body: JSON.stringify(response)
+    });
+  }).catch(err => {
+    callback(err, {
+      statusCode: 500,
+      headers: {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Credentials': true, 'Access-Control-Allow-Methods': '*', 'Access-Control-Allow-Headers': '*'},
+      body: JSON.stringify({'error': err})
+    });
+  });
+};
