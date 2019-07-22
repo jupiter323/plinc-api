@@ -154,7 +154,7 @@ paths:
         credentials:
           Fn::Sub: '${PlincApiRole.Arn}'
         uri:
-          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateFunction.Arn}/invocations'
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetFunction.Arn}/invocations'
         responses:
           default:
             statusCode: '200'
