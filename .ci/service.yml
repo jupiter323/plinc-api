@@ -97,7 +97,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: index.create
+      Handler: src/index.create
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
@@ -122,7 +122,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: index.handler
+      Handler: src/index.handler
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy

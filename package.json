@@ -27,5 +27,11 @@
   "dependencies": {
     "aws-sdk": "^2.493.0",
     "uuid": "3.3.2"
-  }
+  },
+  "files": [
+    "/src/**/*.js",
+    "/src/**/*.json",
+    "!/src/**/*.test.js",
+    "!/src/**/*.integration.js"
+  ]
 }
