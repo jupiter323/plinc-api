@@ -37,16 +37,10 @@ class Lists {
   }
 
   create(params) {
-    const listId = uuid.v4();
+    params.listId = uuid.v4();
     return new Promise((resolve, reject) => {
-      const createParams = {
-        listId,
-        owner: params.owner
-      };
-
-      console.log('createParams', createParams);
-      this.dynamodb.putItem(this.list(createParams)).promise().then(() => {
-        resolve(JSON.stringify({'listId': listId}));
+      this.dynamodb.putItem(this.list(params)).promise().then(() => {
+        resolve(JSON.stringify({'listId': params.listId}));
       }).catch(err => {
         reject(JSON.stringify({'error': err}));
       });
