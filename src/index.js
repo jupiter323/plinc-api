@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const uuidv = require('uuid');
+const uuid = require('uuid');
 
 const dynamodb = new AWS.DynamoDB();
 
@@ -25,7 +25,7 @@ module.exports.handler = (event, context, callback) => {
 };
 
 module.exports.create = (event, context, callback) => {
-  const listId = uuidv();
+  const listId = uuid.v4();
   dynamodb.putItem(list({
     owner: "003",
     listId,
