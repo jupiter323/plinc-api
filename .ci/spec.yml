@@ -136,3 +136,4 @@ definitions:
     required:
       - owner
       - public
+      - title
