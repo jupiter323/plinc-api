@@ -98,7 +98,7 @@ Resources:
     Properties:
       Runtime: nodejs10.x
       Handler: index.create
-      CodeUri: ../src
+      CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
         - AWSLambdaBasicExecutionRole
@@ -123,7 +123,7 @@ Resources:
     Properties:
       Runtime: nodejs10.x
       Handler: index.handler
-      CodeUri: ../src
+      CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
         - AWSLambdaBasicExecutionRole

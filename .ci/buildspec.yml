@@ -12,7 +12,13 @@ phases:
 
   build:
     commands:
-    - echo Build
+      - export package=$(npm pack)
+      - mkdir dist
+      - tar -C dist -xvf ${package}
+      - cd dist/package
+      - npm i --production
+      - rm package-lock.json
+      - cd ../../
 
   post_build:
     commands:
