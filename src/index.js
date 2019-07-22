@@ -53,8 +53,8 @@ module.exports.create = (event, context, callback) => {
 module.exports.get = (event, context, callback) => {
   var params = {
     Key: {
-      "listId": {
-        S: event['pathParameters']['listId']
+      "ListId": {
+        S: event['pathParameters']['id']
       }
     },
     TableName: process.env.LISTS_TABLE_NAME
