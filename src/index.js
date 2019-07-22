@@ -55,6 +55,9 @@ module.exports.get = (event, context, callback) => {
     Key: {
       "ListId": {
         S: event['pathParameters']['id']
+      },
+      "Owner": {
+        S: event['pathParameters']['owner']
       }
     },
     TableName: process.env.LISTS_TABLE_NAME
