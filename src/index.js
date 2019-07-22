@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 const dynamodb = new AWS.DynamoDB();
 
 const list = (props) => ({
-    "TableName": "Plinc.Lists",
+    "TableName": process.env.LISTS_TABLE_NAME,
     "Item": {
       "Owner": {"S": props.owner},
       "ListId": {"S": props.listId},

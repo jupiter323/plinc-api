@@ -107,6 +107,9 @@ Resources:
               - dynamodb:PutItem
             Effect: Allow
             Resource: !GetAtt Lists.Arn
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
       Events:
         PlincApiCreate:
           Type: Api
