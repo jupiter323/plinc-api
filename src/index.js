@@ -31,6 +31,8 @@ module.exports.create = (event, context, callback) => {
   if (event.body !== null && event.body !== undefined) {
     let body = JSON.parse(event.body);
 
+    console.log('body');
+
     const listId = uuid.v4();
     dynamodb.putItem(list({
       listId,
