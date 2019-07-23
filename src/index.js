@@ -7,14 +7,6 @@ const headers = { 'Access-Control-Allow-Origin': '*',
                   'Access-Control-Allow-Methods': '*',
                   'Access-Control-Allow-Headers': '*' };
 
-module.exports.handler = (event, context, callback) => {
-  callback(null, {
-    statusCode: 200,
-    headers,
-    body: JSON.stringify({'message': 'Hello from API'})
-  });
-};
-
 module.exports.create = (event, context, callback) => {
   if (event.body !== null && event.body !== undefined) {
     let body = JSON.parse(event.body);

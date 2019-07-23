@@ -144,29 +144,6 @@ Resources:
             Method: GET
             RestApiId: !Ref PlincApi
 
-  HelloFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Runtime: nodejs10.x
-      Handler: src/index.handler
-      CodeUri: ../dist/package
-      Policies:
-        - !Ref KeyAccessPolicy
-        - AWSLambdaBasicExecutionRole
-      Events:
-        PlincApiHello:
-          Type: Api
-          Properties:
-            Path: /hello
-            Method: GET
-            RestApiId: !Ref PlincApi
-
-  HelloLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub '/aws/lambda/${HelloFunction}'
-      RetentionInDays: 1
-
   CreateLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
