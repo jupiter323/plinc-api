@@ -6,9 +6,8 @@
   "scripts": {
     "start": "sam local start-api -t .ci/service.yml",
     "integration": "tape src/**/*.integration.test.js",
-    "api:validate": "swagger-cli validate ./.ci/spec.yml",
-    "api:validate:no-schema": "swagger-cli validate ./.ci/spec.yml --no-schema",
-    "swagger:convert": "any-json .ci/spec.yml swagger/spec.json",
+    "api:validate": "npm run swagger:convert && swagger-cli validate ./swagger/spec.json",
+    "swagger:convert": "any-json .ci/spec.yml | jq '.info.title = \"Plinc API\"' > swagger/spec.json",
     "swagger:start": "webpack-dev-server --open --inline --mode development",
     "swagger:build": "webpack --mode production"
   },

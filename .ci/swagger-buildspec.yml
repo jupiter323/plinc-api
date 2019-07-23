@@ -8,15 +8,16 @@ env:
 phases:
   install:
     commands:
+      - sudo apt-get install jq
       - npm ci
 
   pre_build:
     commands:
-    - npm run swagger:convert
+    - npm run api:validate
 
   build:
     commands:
-      - npm run swagger:build
+    - npm run swagger:build
 
 artifacts:
   files:

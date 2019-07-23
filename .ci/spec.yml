@@ -123,11 +123,11 @@ paths:
               method.response.header.Access-Control-Allow-Origin: "'*'"
 
   /lists/{owner}/{id}:
-    summary: Represents a list
-    description: >
-      This resource represents an individual list in Plinc.
-      Each lists is identified by a unique `id` and `owner`.
     get:
+      summary: Represents a list
+      description: >
+        This resource represents an individual list in Plinc.
+        Each lists is identified by a unique `id` and `owner`.
       parameters:
         - name: owner
           in: path
