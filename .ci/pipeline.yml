@@ -95,7 +95,7 @@ Resources:
                   }
         - Name: Build
           Actions:
-            - Name: APIBuild
+            - Name: Api
               RunOrder: 1
               InputArtifacts:
                 - Name: GitHubOutput
@@ -109,7 +109,7 @@ Resources:
               Configuration:
                 ProjectName: !Ref Build
                 PrimarySource: GitHubOutput
-            - Name: SwaggerBuild
+            - Name: Swagger
               RunOrder: 1
               InputArtifacts:
               - Name: GitHubOutput
@@ -177,7 +177,7 @@ Resources:
 #                StackName: !Sub 'plinc-${Project}-integration-test'
         - Name: Development
           Actions:
-            - Name: Service
+            - Name: Api
               RunOrder: 1
               ActionTypeId:
                 Category: Deploy
@@ -200,7 +200,7 @@ Resources:
                     "Project": "${Project}",
                     "ListsTableName": "Plinc.${Project}.Lists"
                   }
-            - Name: Deploy
+            - Name: Swagger
               RunOrder: 1
               InputArtifacts:
               - Name: SwaggerBuildOutput
