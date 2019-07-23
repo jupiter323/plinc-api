@@ -39,6 +39,10 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /plinc/Foundations/Key
 
+  SwaggerUIBucket:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /plinc/Foundations/SwaggerBucketName
+
 Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -91,7 +95,7 @@ Resources:
                   }
         - Name: Build
           Actions:
-            - Name: Build
+            - Name: APIBuild
               RunOrder: 1
               InputArtifacts:
                 - Name: GitHubOutput
@@ -104,6 +108,20 @@ Resources:
                 Provider: CodeBuild
               Configuration:
                 ProjectName: !Ref Build
+                PrimarySource: GitHubOutput
+            - Name: SwaggerBuild
+              RunOrder: 1
+              InputArtifacts:
+              - Name: GitHubOutput
+              OutputArtifacts:
+              - Name: SwaggerBuildOutput
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref SwaggerBuild
                 PrimarySource: GitHubOutput
 #        - Name: Integration
 #          Actions:
@@ -182,7 +200,18 @@ Resources:
                     "Project": "${Project}",
                     "ListsTableName": "Plinc.${Project}.Lists"
                   }
-
+            - Name: Deploy
+              RunOrder: 1
+              InputArtifacts:
+              - Name: SwaggerBuildOutput
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: S3
+                Version: 1
+              Configuration:
+                BucketName: !Ref SwaggerUIBucket
+                Extract: true
   PipelineTrigger:
     Type: AWS::CodePipeline::Webhook
     Properties:
@@ -215,6 +244,22 @@ Resources:
             Value: !Ref ArtifactStore
           - Name: ENCRYPTION_KEY
             Value: !Ref EncryptionKey
+      Artifacts:
+        Type: CODEPIPELINE
+
+  SwaggerBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub 'plinc-${Project}-swagger-build'
+      Description: Build for Plinc API Swagger UI
+      ServiceRole: !Ref PipelineExecutionRole
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: .ci/swagger-buildspec.yml
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/nodejs:10.14.1
+        Type: LINUX_CONTAINER
       Artifacts:
         Type: CODEPIPELINE
 

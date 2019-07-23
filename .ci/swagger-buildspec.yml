@@ -1,0 +1,21 @@
+version: 0.2
+
+env:
+  variables:
+    CI: 'true'
+    SKIP_PREFLIGHT_CHECK: 'true'
+
+phases:
+  install:
+    commands:
+      - npm ci
+
+  build:
+    commands:
+      - npm run swagger:build
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: false
+  base-directory: .swagger-dist/
