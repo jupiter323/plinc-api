@@ -7,6 +7,11 @@ info:
   title:
     Fn::Sub: 'plinc-${Project}'
 
+host: hn0gf6bpid.execute-api.us-east-1.amazonaws.com
+basePath: /prod
+schemes:
+  - http
+
 securityDefinitions:
   Authorizer:
     type: apiKey
