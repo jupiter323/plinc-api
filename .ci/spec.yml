@@ -10,7 +10,7 @@ info:
 host: hn0gf6bpid.execute-api.us-east-1.amazonaws.com
 basePath: /prod
 schemes:
-  - http
+  - https
 
 securityDefinitions:
   Authorizer:
