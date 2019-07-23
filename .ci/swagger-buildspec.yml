@@ -10,6 +10,10 @@ phases:
     commands:
       - npm ci
 
+  pre_build:
+    commands:
+    - npm run swagger:convert
+
   build:
     commands:
       - npm run swagger:build

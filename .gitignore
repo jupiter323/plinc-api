@@ -2,3 +2,4 @@
 node_modules/
 .dist/
 .swagger-dist/
+.swagger/spec.json

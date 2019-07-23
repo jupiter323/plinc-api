@@ -1,8 +1,9 @@
 require('../node_modules/swagger-ui/dist/swagger-ui.css');
 
 import SwaggerUI from 'swagger-ui';
+import Spec from './spec.json';
 
 SwaggerUI({
-  url: "https://petstore.swagger.io/v2/swagger.json",
+  spec: Spec,
   dom_id: '#app'
 });

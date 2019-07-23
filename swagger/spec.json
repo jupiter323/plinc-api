@@ -1,0 +1,293 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Plinc API\n",
+        "version": "1.0.0",
+        "title": {
+            "Fn::Sub": "plinc-${Project}"
+        }
+    },
+    "securityDefinitions": {
+        "Authorizer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "x-amazon-apigateway-authtype": "cognito_user_pools",
+            "x-amazon-apigateway-authorizer": {
+                "providerARNs": [
+                    {
+                        "Fn::Sub": "arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${UserPoolId}"
+                    }
+                ],
+                "type": "cognito_user_pools"
+            }
+        }
+    },
+    "paths": {
+        "/hello": {
+            "get": {
+                "summary": "Say Hello",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {
+                            "Access-Control-Allow-Headers": {
+                                "type": "string"
+                            },
+                            "Access-Control-Allow-Methods": {
+                                "type": "string"
+                            },
+                            "Access-Control-Allow-Origin": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "x-amazon-apigateway-request-validator": "params-only",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorizer": []
+                    }
+                ],
+                "x-amazon-apigateway-integration": {
+                    "type": "aws_proxy",
+                    "httpMethod": "POST",
+                    "credentials": {
+                        "Fn::Sub": "${PlincApiRole.Arn}"
+                    },
+                    "uri": {
+                        "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${HelloFunction.Arn}/invocations"
+                    },
+                    "responses": {
+                        "default": {
+                            "statusCode": "200",
+                            "responseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                                "method.response.header.Access-Control-Allow-Methods": "'*'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        },
+                        "4\\d{2}": {
+                            "statusCode": "400",
+                            "responseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                                "method.response.header.Access-Control-Allow-Methods": "'*'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        },
+                        "5\\d{2}": {
+                            "statusCode": "500",
+                            "responseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                                "method.response.header.Access-Control-Allow-Methods": "'*'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lists": {
+            "post": {
+                "summary": "Create list",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "list",
+                        "description": "list to be created",
+                        "schema": {
+                            "$ref": "#/definitions/List"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "headers": {
+                            "Access-Control-Allow-Headers": {
+                                "type": "string"
+                            },
+                            "Access-Control-Allow-Methods": {
+                                "type": "string"
+                            },
+                            "Access-Control-Allow-Origin": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "x-amazon-apigateway-request-validator": {
+                    "basic": {
+                        "validateRequestBody": true,
+                        "validateRequestParameters": false
+                    }
+                },
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorizer": []
+                    }
+                ],
+                "x-amazon-apigateway-integration": {
+                    "type": "aws_proxy",
+                    "httpMethod": "POST",
+                    "credentials": {
+                        "Fn::Sub": "${PlincApiRole.Arn}"
+                    },
+                    "uri": {
+                        "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateFunction.Arn}/invocations"
+                    },
+                    "responses": {
+                        "default": {
+                            "statusCode": "200",
+                            "responseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                                "method.response.header.Access-Control-Allow-Methods": "'*'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        },
+                        "4\\d{2}": {
+                            "statusCode": "400",
+                            "responseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                                "method.response.header.Access-Control-Allow-Methods": "'*'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        },
+                        "5\\d{2}": {
+                            "statusCode": "500",
+                            "responseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                                "method.response.header.Access-Control-Allow-Methods": "'*'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lists/{owner}/{id}": {
+            "summary": "Represents a list",
+            "description": "This resource represents an individual list in Plinc. Each lists is identified by a unique `id` and `owner`.\n",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "owner",
+                        "in": "path",
+                        "description": "owner of the list to get",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of the list to get",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Found",
+                        "headers": {
+                            "Access-Control-Allow-Headers": {
+                                "type": "string"
+                            },
+                            "Access-Control-Allow-Methods": {
+                                "type": "string"
+                            },
+                            "Access-Control-Allow-Origin": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorizer": []
+                    }
+                ],
+                "x-amazon-apigateway-integration": {
+                    "type": "aws_proxy",
+                    "httpMethod": "POST",
+                    "credentials": {
+                        "Fn::Sub": "${PlincApiRole.Arn}"
+                    },
+                    "uri": {
+                        "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetFunction.Arn}/invocations"
+                    },
+                    "responses": {
+                        "default": {
+                            "statusCode": "200",
+                            "responseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                                "method.response.header.Access-Control-Allow-Methods": "'*'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        },
+                        "4\\d{2}": {
+                            "statusCode": "400",
+                            "responseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                                "method.response.header.Access-Control-Allow-Methods": "'*'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        },
+                        "5\\d{2}": {
+                            "statusCode": "500",
+                            "responseParameters": {
+                                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                                "method.response.header.Access-Control-Allow-Methods": "'*'",
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "List": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "public": {
+                    "type": "boolean"
+                },
+                "owner": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "owner",
+                "public",
+                "title"
+            ]
+        }
+    }
+}
