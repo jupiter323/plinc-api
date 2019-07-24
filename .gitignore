@@ -1,5 +1,7 @@
 .idea/
 node_modules/
 .dist/
+dist/
 .swagger-dist/
 swagger/spec.json
+*.tgz

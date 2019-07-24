@@ -11,10 +11,11 @@ const headers = { 'Access-Control-Allow-Origin': '*',
 
 module.exports.create = (event, context, callback) => {
   if (event.body !== null && event.body !== undefined) {
-    const claims = decode(event.authorizationToken);
-    console.log('CLAIMS', claims);
+    const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
 
     let body = JSON.parse(event.body);
+
+    body.owner = claims['cognito:username'];
 
     lists.create(body).then(response => {
       callback(null, {
