@@ -1,3 +1,5 @@
+const decode = require('jwt-claims');
+
 const Lists = require('./lists');
 
 const lists = new Lists(process.env.LISTS_TABLE_NAME);
@@ -9,6 +11,9 @@ const headers = { 'Access-Control-Allow-Origin': '*',
 
 module.exports.create = (event, context, callback) => {
   if (event.body !== null && event.body !== undefined) {
+    const claims = decode(event.authorizationToken);
+    console.log('CLAIMS', claims);
+
     let body = JSON.parse(event.body);
 
     lists.create(body).then(response => {

@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.493.0",
+    "jwt-claims": "^1.0.1",
     "swagger-ui": "^3.23.1",
     "uuid": "3.3.2"
   },
