@@ -198,7 +198,8 @@ Resources:
                 ParameterOverrides: !Sub |
                   {
                     "Project": "${Project}",
-                    "ListsTableName": "Plinc.${Project}.Lists"
+                    "ListsTableName": "Plinc.${Project}.Lists",
+                    "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "Build.json", "DEFINITION_KEY"] }
                   }
             - Name: Swagger
               RunOrder: 1
