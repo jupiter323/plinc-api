@@ -43,6 +43,19 @@ paths:
               type: "string"
             Access-Control-Allow-Origin:
               type: "string"
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Origin:
+              type: "string"
+      x-amazon-apigateway-gateway-responses:
+        ACCESS_DENIED:
+          responseParameters:
+            gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
       x-amazon-apigateway-request-validator:
         basic:
           validateRequestBody: true
