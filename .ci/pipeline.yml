@@ -43,6 +43,24 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /plinc/Foundations/SwaggerBucketName
 
+  UserPoolId:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /plinc/Foundations/Cognito/UserPoolId
+    Description: |
+      Id of the Plinc User Pool in Cognito
+
+  IdentityPoolId:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /plinc/Foundations/Cognito/IdentityPoolId
+    Description: |
+      Id of the Plinc Identity Pool in Cognito
+
+  ClientId:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /plinc/Foundations/Cognito/ClientId
+    Description: |
+      Plinc Client Id in Cognito
+
 Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -279,5 +297,12 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/nodejs:10.14.1
         Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: USER_POOL_ID
+            Value: !Ref UserPoolId
+          - Name: IDENTITY_POOL_ID
+            Value: !Ref IdentityPoolId
+          - Name: CLIENT_ID
+            Value: !Ref ClientId
       Artifacts:
         Type: CODEPIPELINE
