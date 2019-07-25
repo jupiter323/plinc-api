@@ -199,7 +199,7 @@ Resources:
                   {
                     "Project": "${Project}",
                     "ListsTableName": "Plinc.${Project}.Lists",
-                    "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "Build.json", "DEFINITION_KEY"] }
+                    "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "build.json", "DEFINITION_KEY"] }
                   }
             - Name: Swagger
               RunOrder: 1
