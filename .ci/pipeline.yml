@@ -57,7 +57,7 @@ Parameters:
 
   ClientId:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: /plinc/Foundations/Cognito/ClientId
+    Default: /plinc/Foundations/Cognito/UserPoolClientId
     Description: |
       Plinc Client Id in Cognito
 
