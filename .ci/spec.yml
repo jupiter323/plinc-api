@@ -39,6 +39,13 @@ x-amazon-apigateway-gateway-responses:
     responseTemplates:
       application/json: "{\"message\":$context.error.messageString}"
 
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+
+x-amazon-apigateway-request-validator: all
+
 paths:
   /lists:
     post:
@@ -68,10 +75,6 @@ paths:
               type: "string"
             Access-Control-Allow-Origin:
               type: "string"
-      x-amazon-apigateway-request-validator:
-        basic:
-          validateRequestBody: true
-          validateRequestParameters: false
       consumes:
       - application/json
       produces:
