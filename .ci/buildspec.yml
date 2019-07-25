@@ -21,7 +21,7 @@ phases:
       - cd ../../
       - npm run swagger:bundle
       - export DEFINITION_KEY=s3://$ARTIFACT_BUCKET/definitions/$CODEBUILD_RESOLVED_SOURCE_VERSION.json
-      - aws s3 cp .ci/spec/bundled.spec.json $DEFINITION_KEY --sse aws:kms --sse-kms-key-id $ENCRYPTION_KEY
+      - aws s3 cp .ci/spec/bundle.spec.json $DEFINITION_KEY --sse aws:kms --sse-kms-key-id $ENCRYPTION_KEY
       - node -e 'console.log(JSON.stringify(process.env))' > build.json
 
   post_build:
