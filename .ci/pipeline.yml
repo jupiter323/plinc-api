@@ -123,58 +123,59 @@ Resources:
               Configuration:
                 ProjectName: !Ref SwaggerBuild
                 PrimarySource: GitHubOutput
-#        - Name: Integration
-#          Actions:
-#            - Name: Deploy
-#              RunOrder: 1
-#              ActionTypeId:
-#                Category: Deploy
-#                Owner: AWS
-#                Provider: CloudFormation
-#                Version: 1
-#              RoleArn: !Ref PipelineExecutionRole
-#              InputArtifacts:
-#                - Name: GitHubOutput
-#                - Name: BuildOutput
-#              OutputArtifacts:
-#                - Name: IntegrationTestDeployOutput
-#              Configuration:
-#                ActionMode: CREATE_UPDATE
-#                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
-#                RoleArn: !Ref PipelineExecutionRole
-#                TemplatePath: BuildOutput::packaged.yml
-#                TemplateConfiguration: GitHubOutput::.ci/config/service/dev.json
-#                StackName: !Sub 'plinc-${Project}-integration-test'
-#                OutputFileName: Outputs.json
-#                ParameterOverrides: !Sub |
-#                  {
-#                    "Project": "ApiIntegrationTest",
-#                    "ListsTableName": "Plinc.${Project}.IntegrationTest.Lists"
-#                  }
-#            - Name: Test
-#              RunOrder: 2
-#              InputArtifacts:
-#                - Name: GitHubOutput
-#                - Name: IntegrationTestDeployOutput
-#              ActionTypeId:
-#                Category: Test
-#                Owner: AWS
-#                Version: 1
-#                Provider: CodeBuild
-#              Configuration:
-#                ProjectName: !Ref Test
-#                PrimarySource: GitHubOutput
-#            - Name: Teardown
-#              RunOrder: 3
-#              ActionTypeId:
-#                Category: Deploy
-#                Owner: AWS
-#                Provider: CloudFormation
-#                Version: 1
-#              Configuration:
-#                ActionMode: DELETE_ONLY
-#                RoleArn: !Ref PipelineExecutionRole
-#                StackName: !Sub 'plinc-${Project}-integration-test'
+        - Name: Integration
+          Actions:
+            - Name: Deploy
+              RunOrder: 1
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              RoleArn: !Ref PipelineExecutionRole
+              InputArtifacts:
+                - Name: GitHubOutput
+                - Name: BuildOutput
+              OutputArtifacts:
+                - Name: IntegrationTestDeployOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+                RoleArn: !Ref PipelineExecutionRole
+                TemplatePath: BuildOutput::packaged.yml
+                TemplateConfiguration: GitHubOutput::.ci/config/service/dev.json
+                StackName: !Sub 'plinc-${Project}-integration-test'
+                OutputFileName: Outputs.json
+                ParameterOverrides: !Sub |
+                  {
+                    "Project": "ApiIntegrationTest",
+                    "ListsTableName": "Plinc.${Project}.IntegrationTest.Lists",
+                    "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "build.json", "DEFINITION_KEY"] }
+                  }
+            - Name: Test
+              RunOrder: 2
+              InputArtifacts:
+                - Name: GitHubOutput
+                - Name: IntegrationTestDeployOutput
+              ActionTypeId:
+                Category: Test
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref Test
+                PrimarySource: GitHubOutput
+            - Name: Teardown
+              RunOrder: 3
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                ActionMode: DELETE_ONLY
+                RoleArn: !Ref PipelineExecutionRole
+                StackName: !Sub 'plinc-${Project}-integration-test'
         - Name: Development
           Actions:
             - Name: Api
