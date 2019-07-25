@@ -33,6 +33,12 @@ Parameters:
     Description: |
       The name of the lists table in DynamoDB
 
+  DefinitionKey:
+    Type: String
+    MinLength: 3
+    Description: |
+      The S3 location of the OpenApi spec
+
 Globals:
   Api:
     Cors: "'*'"
@@ -66,7 +72,7 @@ Resources:
         Fn::Transform:
           Name: AWS::Include
           Parameters:
-            Location: ./spec.yml
+            Location: !Ref DefinitionKey
       Cors:
         AllowHeaders: "'content-type,authorization,x-amz-date,x-amz-security-token,x-requested-with'"
         AllowOrigin: "'*'"

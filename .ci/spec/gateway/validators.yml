@@ -1,0 +1,3 @@
+all:
+  validateRequestBody: true
+  validateRequestParameters: true

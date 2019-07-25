@@ -1,0 +1,14 @@
+List:
+  type: object
+  properties:
+    title:
+      type: string
+    description:
+      type: string
+    category:
+      type: string
+    public:
+      type: boolean
+  required:
+  - public
+  - title

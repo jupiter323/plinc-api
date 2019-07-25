@@ -13,36 +13,13 @@ schemes:
   - https
 
 securityDefinitions:
-  Authorizer:
-    type: apiKey
-    name: Authorization
-    in: header
-    x-amazon-apigateway-authtype: cognito_user_pools
-    x-amazon-apigateway-authorizer:
-      providerARNs:
-      - Fn::Sub: "arn:${AWS::Partition}:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${UserPoolId}"
-      type: cognito_user_pools
+  $ref: ./security.yml
 
 x-amazon-apigateway-gateway-responses:
-  DEFAULT_4XX:
-    responseParameters:
-      gatewayresponse.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-      gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
-    responseTemplates:
-      application/json: "{\"message\":$context.error.messageString}"
-  DEFAULT_5XX:
-    responseParameters:
-      gatewayresponse.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-      gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-      gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
-    responseTemplates:
-      application/json: "{\"message\":$context.error.messageString}"
+  $ref: ./gateway/responses.yml
 
 x-amazon-apigateway-request-validators:
-  all:
-    validateRequestBody: true
-    validateRequestParameters: true
+  $ref: ./gateway/validators.yml
 
 x-amazon-apigateway-request-validator: all
 
@@ -169,17 +146,4 @@ paths:
               method.response.header.Access-Control-Allow-Origin: "'*'"
 
 definitions:
-  List:
-    type: object
-    properties:
-      title:
-        type: string
-      description:
-        type: string
-      category:
-        type: string
-      public:
-        type: boolean
-    required:
-      - public
-      - title
+  $ref: ./definitions.yml

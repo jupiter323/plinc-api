@@ -5,3 +5,4 @@ dist/
 .swagger-dist/
 swagger/spec.json
 *.tgz
+bundle.spec.json
