@@ -11,6 +11,8 @@ const schema = {
   "Public": "BOOL"
 };
 
+const unpack = utils.unpack(schema);
+
 class Lists {
   constructor(tableName) {
     this.tableName = tableName;
@@ -51,7 +53,26 @@ class Lists {
 
     return new Promise((resolve, reject) => {
       this.dynamodb.getItem(query).promise().then((response) => {
-        resolve(utils.unpack(schema, response["Item"]));
+        resolve(unpack(response["Item"]));
+      }).catch(err => {
+        reject({'error': err});
+      });
+    });
+  }
+
+  getAll(params) {
+    const query = {
+      TableName: this.tableName,
+      KeyConditionExpression: "Owner = :owner",
+      ExpressionAttributeValues:{
+        ":owner": { S: params.owner }
+      },
+      ReturnConsumedCapacity: "TOTAL"
+    };
+
+    return new Promise((resolve, reject) => {
+      this.dynamodb.query(query).promise().then((response) => {
+        resolve(response.items.map(unpack));
       }).catch(err => {
         reject({'error': err});
       });

@@ -50,3 +50,21 @@ module.exports.get = (event, context, callback) => {
     });
   });
 };
+
+module.exports.getAll = (event, context, callback) => {
+  const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
+
+  lists.getAll({ owner: claims['cognito:username'] }).then(response => {
+    callback(null, {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(response)
+    });
+  }).catch(err => {
+    callback(err, {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify(err)
+    });
+  });
+};

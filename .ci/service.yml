@@ -143,7 +143,33 @@ Resources:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
       Events:
-        PlincApiCreate:
+        PlincApiGet:
+          Type: Api
+          Properties:
+            Path: /lists
+            Method: GET
+            RestApiId: !Ref PlincApi
+
+  GetAllFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/index.getAll
+      CodeUri: ../dist/package
+      Policies:
+      - !Ref KeyAccessPolicy
+      - AWSLambdaBasicExecutionRole
+      - Statement:
+          Action:
+          - dynamodb:PutItem
+          - dynamodb:GetItem
+          Effect: Allow
+          Resource: !GetAtt Lists.Arn
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
+      Events:
+        PlincApiGetAll:
           Type: Api
           Properties:
             Path: /lists
@@ -160,6 +186,12 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${GetFunction}'
+      RetentionInDays: 1
+
+  GetAllLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetAllFunction}'
       RetentionInDays: 1
 
   ApiUrlParameter:

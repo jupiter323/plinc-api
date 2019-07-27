@@ -9,7 +9,7 @@ module.exports.pack = (schema, params) => {
   }, {});
 };
 
-module.exports.unpack = (schema, params) => {
+module.exports.unpack = schema => params => {
   return Object.keys(params).reduce((acc, curr) => {
     if(schema[curr]) {
       acc[curr] = params[curr][schema[curr]];
