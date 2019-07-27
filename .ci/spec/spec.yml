@@ -1,11 +1,9 @@
 swagger: '2.0'
 
 info:
-  description: |
-    Plinc API
-  version: 1.0.0
-  title:
-    Fn::Sub: 'plinc-${Project}'
+  title: Plinc API
+  description: Use this API to retrieve wish lists and items for Plinc.app
+  version: 0.0.1
 
 host: qu6nngtgae.execute-api.us-east-1.amazonaws.com
 basePath: /prod
@@ -26,7 +24,10 @@ x-amazon-apigateway-request-validator: all
 paths:
   /lists:
     post:
-      summary: Create list
+      summary: Create a list
+      tags:
+        - Lists
+      description: Create a list for the current logged in user.
       parameters:
       - in: body
         name: list
@@ -86,7 +87,10 @@ paths:
               method.response.header.Access-Control-Allow-Origin: "'*'"
 
     get:
-      summary: Get all lists for the logged in user
+      summary: Get lists
+      tags:
+        - Lists
+      description: Get all lists for the current logged in user.
       responses:
         201:
           description: Created
@@ -141,10 +145,10 @@ paths:
 
   /lists/{possessor}/{id}:
     get:
-      summary: Represents a list
-      description: >
-        This resource represents an individual list in Plinc.
-        Each lists is identified by a unique `id` and `possessor`.
+      summary: Get list
+      tags:
+        - Lists
+      description: Get a single list for a user
       parameters:
         - name: possessor
           in: path
