@@ -70,6 +70,8 @@ class Lists {
       ReturnConsumedCapacity: "TOTAL"
     };
 
+    console.log('GET ALL', query);
+
     return new Promise((resolve, reject) => {
       this.dynamodb.query(query).promise().then((response) => {
         resolve(response.Items.map(unpack));
