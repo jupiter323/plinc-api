@@ -3,7 +3,7 @@ const AWS = require('aws-sdk');
 const utils = require('./dynamo.utils');
 
 const schema = {
-  "Owner": "S",
+  "User": "S",
   "ListId": "S",
   "Title": "S",
   "Description": "S",
@@ -44,8 +44,8 @@ class Lists {
         "ListId": {
           S: params.id
         },
-        "Owner": {
-          S: params.owner
+        "User": {
+          S: params.user
         }
       },
       TableName: this.tableName
@@ -63,9 +63,9 @@ class Lists {
   getAll(params) {
     const query = {
       TableName: this.tableName,
-      KeyConditionExpression: "Owner = :owner",
+      KeyConditionExpression: "User = :user",
       ExpressionAttributeValues:{
-        ":owner": { S: params.owner }
+        ":user": { S: params.user }
       },
       ReturnConsumedCapacity: "TOTAL"
     };

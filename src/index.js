@@ -15,7 +15,7 @@ module.exports.create = (event, context, callback) => {
 
     let body = JSON.parse(event.body);
 
-    body.owner = claims['cognito:username'];
+    body.user = claims['cognito:username'];
 
     lists.create(body).then(response => {
       callback(null, {
@@ -34,7 +34,7 @@ module.exports.create = (event, context, callback) => {
 };
 
 module.exports.get = (event, context, callback) => {
-  const params = { id: event['pathParameters']['id'], owner: event['pathParameters']['owner'] };
+  const params = { id: event['pathParameters']['id'], user: event['pathParameters']['user'] };
 
   lists.get(params).then(response => {
     callback(null, {
@@ -54,7 +54,7 @@ module.exports.get = (event, context, callback) => {
 module.exports.getAll = (event, context, callback) => {
   const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
 
-  lists.getAll({ owner: claims['cognito:username'] }).then(response => {
+  lists.getAll({ user: claims['cognito:username'] }).then(response => {
     callback(null, {
       statusCode: 200,
       headers,

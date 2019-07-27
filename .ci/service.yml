@@ -91,10 +91,10 @@ Resources:
       AttributeDefinitions:
         - AttributeName: ListId
           AttributeType: S
-        - AttributeName: Owner
+        - AttributeName: User
           AttributeType: S
       KeySchema:
-        - AttributeName: Owner
+        - AttributeName: User
           KeyType: HASH
         - AttributeName: ListId
           KeyType: RANGE
