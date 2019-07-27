@@ -54,8 +54,6 @@ module.exports.get = (event, context, callback) => {
 module.exports.getAll = (event, context, callback) => {
   const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
 
-  console.log('BEFORE GET ALL');
-
   lists.getAll({ possessor: claims['cognito:username'] }).then(response => {
     callback(null, {
       statusCode: 200,
