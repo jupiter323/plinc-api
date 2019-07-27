@@ -72,7 +72,7 @@ class Lists {
 
     return new Promise((resolve, reject) => {
       this.dynamodb.query(query).promise().then((response) => {
-        resolve(response.items.map(unpack));
+        resolve(response.Items.map(unpack));
       }).catch(err => {
         reject({'error': err});
       });
