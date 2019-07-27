@@ -74,7 +74,7 @@ class Lists {
       this.dynamodb.query(query).promise().then((response) => {
         resolve(response.Items.map(unpack));
       }).catch(err => {
-        reject({'error': err});
+        reject({'error': JSON.stringify(err)});
       });
     });
   }
