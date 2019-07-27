@@ -7,7 +7,7 @@ info:
   title:
     Fn::Sub: 'plinc-${Project}'
 
-host: 6oy1v4zjy9.execute-api.us-east-1.amazonaws.com
+host: qu6nngtgae.execute-api.us-east-1.amazonaws.com
 basePath: /prod
 schemes:
   - https
