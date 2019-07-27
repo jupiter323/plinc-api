@@ -116,13 +116,6 @@ Resources:
       Environment:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
-      Events:
-        PlincApiCreate:
-          Type: Api
-          Properties:
-            Path: /lists
-            Method: POST
-            RestApiId: !Ref PlincApi
 
   GetFunction:
     Type: AWS::Serverless::Function
@@ -135,20 +128,12 @@ Resources:
       - AWSLambdaBasicExecutionRole
       - Statement:
           Action:
-            - dynamodb:PutItem
             - dynamodb:GetItem
           Effect: Allow
           Resource: !GetAtt Lists.Arn
       Environment:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
-      Events:
-        PlincApiGet:
-          Type: Api
-          Properties:
-            Path: /lists
-            Method: GET
-            RestApiId: !Ref PlincApi
 
   GetAllFunction:
     Type: AWS::Serverless::Function
@@ -161,20 +146,12 @@ Resources:
       - AWSLambdaBasicExecutionRole
       - Statement:
           Action:
-          - dynamodb:PutItem
           - dynamodb:GetItem
           Effect: Allow
           Resource: !GetAtt Lists.Arn
       Environment:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
-      Events:
-        PlincApiGetAll:
-          Type: Api
-          Properties:
-            Path: /lists
-            Method: GET
-            RestApiId: !Ref PlincApi
 
   CreateLogGroup:
     Type: AWS::Logs::LogGroup
