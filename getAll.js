@@ -5,7 +5,7 @@ const Lists = require('./src/lists');
 
 const lists = new Lists(process.env.LISTS_TABLE_NAME);
 
-lists.getAll({ user: "HarryPotter" }).then(response => {
+lists.getAll({ possessor: "HarryPotter" }).then(response => {
   console.log('Found', response);
 }).catch(err => {
   console.log('Error', err);
