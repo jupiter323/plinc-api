@@ -1,0 +1,207 @@
+swagger: '2.0'
+
+info:
+  title: Plinc API
+  description: Use this API to retrieve wish lists and items for Plinc.app
+  version: 0.0.1
+
+host: qu6nngtgae.execute-api.us-east-1.amazonaws.com
+basePath: /prod
+schemes:
+  - https
+
+securityDefinitions:
+  $ref: ./security.yml
+
+x-amazon-apigateway-gateway-responses:
+  $ref: ./gateway/responses.yml
+
+x-amazon-apigateway-request-validators:
+  $ref: ./gateway/validators.yml
+
+x-amazon-apigateway-request-validator: all
+
+paths:
+  /lists:
+    post:
+      summary: Create a list
+      tags:
+        - Lists
+      description: Create a list for the current logged in user.
+      parameters:
+      - in: body
+        name: list
+        description: list to be created
+        schema:
+          $ref: '#/definitions/List'
+      responses:
+        201:
+          description: Created
+          headers:
+            Access-Control-Allow-Headers:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Origin:
+              type: "string"
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Origin:
+              type: "string"
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      security:
+      - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    get:
+      summary: Get lists
+      tags:
+        - Lists
+      description: Get all lists for the current logged in user.
+      responses:
+        201:
+          description: Created
+          headers:
+            Access-Control-Allow-Headers:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Origin:
+              type: "string"
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Origin:
+              type: "string"
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      security:
+      - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /lists/{possessor}/{id}:
+    get:
+      summary: Get list
+      tags:
+        - Lists
+      description: Get a single list for a user
+      parameters:
+        - name: possessor
+          in: path
+          description: user of the list to get
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id of the list to get
+          required: true
+          type: string
+      responses:
+        200:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Origin:
+              type: "string"
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      security:
+      - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+definitions:
+  $ref: ./definitions.yml

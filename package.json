@@ -5,7 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "sam local start-api -t .ci/service.yml",
-    "integration": "tape src/**/*.integration.test.js"
+    "integration": "tape src/**/*.integration.test.js",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
+    "prettier": "prettier --write '**/*.{js,jsx,md,json,css}'",
+    "api:validate": "npm run swagger:bundle && swagger-cli validate swagger/bundle.spec.json",
+    "swagger:bundle": "swagger-cli bundle .ci/spec/spec.yml -o swagger/bundle.spec.json",
+    "swagger:start": "webpack-dev-server --open --inline --mode development",
+    "swagger:build": "webpack --mode production"
   },
   "repository": {
     "type": "git",
@@ -18,7 +25,43 @@
   },
   "homepage": "https://github.com/Morriphi/plinc-api#readme",
   "devDependencies": {
-    "request": "^2.88.0",
-    "tape": "^4.11.0"
-  }
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "axios": "^0.19.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.1.0",
+    "faker": "^4.1.0",
+    "html-webpack-plugin": "^3.2.0",
+    "html-webpack-template": "^6.2.0",
+    "husky": "^3.0.1",
+    "style-loader": "^0.23.1",
+    "swagger-cli": "^2.3.0",
+    "tape": "^4.11.0",
+    "webpack": "^4.37.0",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.13.0",
+    "babel-eslint": "^10.0.2",
+    "prettier": "^1.17.1",
+    "pretty-quick": "^1.11.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.493.0",
+    "jwt-claims": "^1.0.1",
+    "swagger-ui": "^3.23.1",
+    "uuid": "3.3.2"
+  },
+  "files": [
+    "/src/**/*.js",
+    "/src/**/*.json",
+    "!/src/**/*.test.js",
+    "!/src/**/*.integration.js"
+  ]
 }

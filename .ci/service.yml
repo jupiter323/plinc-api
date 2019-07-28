@@ -27,6 +27,18 @@ Parameters:
     Description: |
       Arn of the Plinc User Pool in Cognito
 
+  ListsTableName:
+    Type: String
+    MinLength: 3
+    Description: |
+      The name of the lists table in DynamoDB
+
+  DefinitionKey:
+    Type: String
+    MinLength: 3
+    Description: |
+      The S3 location of the OpenApi spec
+
 Globals:
   Api:
     Cors: "'*'"
@@ -60,34 +72,103 @@ Resources:
         Fn::Transform:
           Name: AWS::Include
           Parameters:
-            Location: ./spec.yml
+            Location: !Ref DefinitionKey
       Cors:
         AllowHeaders: "'content-type,authorization,x-amz-date,x-amz-security-token,x-requested-with'"
         AllowOrigin: "'*'"
         AllowCredentials: false
         MaxAge: "'3600'"
 
-  HelloFunction:
+  Lists:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref ListsTableName
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: ListId
+          AttributeType: S
+        - AttributeName: Possessor
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Possessor
+          KeyType: HASH
+        - AttributeName: ListId
+          KeyType: RANGE
+
+  CreateFunction:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: index.handler
-      CodeUri: ../src
+      Handler: src/index.create
+      CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
         - AWSLambdaBasicExecutionRole
-      Events:
-        PlincApiHello:
-          Type: Api
-          Properties:
-            Path: /hello
-            Method: GET
-            RestApiId: !Ref PlincApi
+        - Statement:
+            Action:
+              - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt Lists.Arn
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
 
-  LogGroup:
+  GetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/index.get
+      CodeUri: ../dist/package
+      Policies:
+      - !Ref KeyAccessPolicy
+      - AWSLambdaBasicExecutionRole
+      - Statement:
+          Action:
+            - dynamodb:GetItem
+          Effect: Allow
+          Resource: !GetAtt Lists.Arn
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
+
+  GetAllFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/index.getAll
+      CodeUri: ../dist/package
+      Policies:
+      - !Ref KeyAccessPolicy
+      - AWSLambdaBasicExecutionRole
+      - Statement:
+          Action:
+          - dynamodb:Query
+          Effect: Allow
+          Resource: !GetAtt Lists.Arn
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
+
+  CreateLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${HelloFunction}'
+      LogGroupName: !Sub '/aws/lambda/${CreateFunction}'
+      RetentionInDays: 1
+
+  GetLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetFunction}'
+      RetentionInDays: 1
+
+  GetAllLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetAllFunction}'
       RetentionInDays: 1
 
   ApiUrlParameter:

@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+  variables:
+    CI: 'true'
+    SKIP_PREFLIGHT_CHECK: 'true'
+
+phases:
+  install:
+    commands:
+      - sudo apt-get install jq
+      - npm ci
+
+  pre_build:
+    commands:
+    - npm run api:validate
+
+  build:
+    commands:
+    - npm run swagger:build
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: false
+  base-directory: .swagger-dist/
