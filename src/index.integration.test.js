@@ -52,11 +52,11 @@ test('Create & Retrieve List', (t) => {
       return createList(token)().then((res) => {
         t.equal(res.status, 201, 'should be 201');
         t.equal(res.statusText, 'Created', 'should be Created');
-        t.ok(res.data.listId, 'has list id');
+        t.ok(res.data.listid, 'has list id');
 
         axios({
           method: 'GET',
-          url: `${API_URL}/lists/${user.username}/${res.data.listId}`,
+          url: `${API_URL}/lists/${user.username}/${res.data.listid}`,
           headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
         }).then((response) => {
           t.equal(response.status, 200, 'should be 200');
