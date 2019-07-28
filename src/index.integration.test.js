@@ -7,7 +7,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 const API_URL = process.env['API_URL'];
 
-const get = (path, fn) => request(`${API_URL}/${path}`, { json: true }, fn);
+const get = (path, fn) => request(`${API_URL}/${path}`, {json: true}, fn);
 
 test('UnAuthentication', (t) => {
   t.plan(2);
@@ -18,14 +18,14 @@ test('UnAuthentication', (t) => {
   });
 });
 
-test('Authenticated', (t) => {
+test('Create & Retrieve List', (t) => {
   t.plan(9);
 
   cognito.generateUser().then(({user, token}) => {
     axios({
       method: 'POST',
       url: `${API_URL}/lists`,
-      headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json' },
+      headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json'},
       data: {
         "title": "Test",
         "description": "Integration Test List",
@@ -40,7 +40,7 @@ test('Authenticated', (t) => {
       axios({
         method: 'GET',
         url: `${API_URL}/lists/${user.username}/${res.data.listId}`,
-        headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json' }
+        headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json'}
       }).then(res => {
         t.equal(res.status, 200, 'should be 200');
         t.equal(res.data.Title, 'Test');
@@ -49,14 +49,51 @@ test('Authenticated', (t) => {
         t.equal(res.data.Public, true);
       });
 
-      cognito.deleteUser({ Username: user.username }).then(() => {
+      cognito.deleteUser({Username: user.username}).then(() => {
         t.pass('DONE!');
       });
     }).catch(err => {
-      cognito.deleteUser({ Username: user.username }).then(() => {
+      cognito.deleteUser({Username: user.username}).then(() => {
         t.fail(err.response.statusText);
       });
     });
   });
+});
 
+test('Retrieve all lists for user', (t) => {
+  t.plan(3);
+
+  const createList = token => () => axios({
+    method: 'POST',
+    url: `${API_URL}/lists`,
+    headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json'},
+    data: {
+      "title": "Test",
+      "description": "Integration Test List",
+      "category": "Integration",
+      "public": truecreate()
+    }
+  });
+
+  cognito.generateUser().then(({user, token}) => {
+    const create = createList(token);
+    Promise.all([create(), create(), create()]).then(() => {
+      axios({
+        method: 'GET',
+        url: `${API_URL}/lists`,
+        headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json'}
+      }).then(res => {
+        t.equal(res.status, 200, 'should be 200');
+        t.equal(res.data.length, 3);
+      });
+
+      cognito.deleteUser({Username: user.username}).then(() => {
+        t.pass('DONE!');
+      });
+    }).catch(err => {
+      cognito.deleteUser({Username: user.username}).then(() => {
+        t.fail(err.response.statusText);
+      });
+    });
+  });
 });
