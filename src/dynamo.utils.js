@@ -1,6 +1,6 @@
 module.exports.pack = (schema, params) => {
   return Object.keys(schema).reduce((acc, curr) => {
-    if(params[curr.toLowerCase()]) {
+    if (params[curr.toLowerCase()]) {
       const value = {};
       value[schema[curr]] = params[curr.toLowerCase()];
       acc[curr] = value;
@@ -9,9 +9,9 @@ module.exports.pack = (schema, params) => {
   }, {});
 };
 
-module.exports.unpack = schema => params => {
+module.exports.unpack = (schema) => (params) => {
   return Object.keys(params).reduce((acc, curr) => {
-    if(schema[curr]) {
+    if (schema[curr]) {
       acc[curr] = params[curr][schema[curr]];
     }
     return acc;

@@ -1,5 +1,5 @@
 module.exports = {
   hooks: {
-    'pre-commit': 'npm run api:validate',
+    'pre-commit': 'pretty-quick --staged && npm run lint && npm run api:validate',
   },
 };
