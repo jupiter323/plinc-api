@@ -1,5 +1,4 @@
 const test = require('tape');
-const request = require('request');
 const axios = require('axios');
 const cognito = require('./cognito');
 
@@ -7,32 +6,46 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 const API_URL = process.env['API_URL'];
 
-const get = (path, fn) => request(`${API_URL}/${path}`, {json: true}, fn);
-
-test('UnAuthentication', (t) => {
+test('UnAuthenticated', (t) => {
   t.plan(2);
 
-  get('lists/possessor/id', (err, res, body) => {
-    t.equal(res.statusCode, 401, 'should be 401');
-    t.equal(body.message, 'Unauthorized', 'message should be Unauthorized');
+  axios.get(`${API_URL}/lists/possessor/id`).catch((err) => {
+    t.equal(err.response.status, 401, 'should be 401');
+    t.equal(err.response.data.message, 'Unauthorized', 'message should be Unauthorized');
   });
+});
+
+const withLoggedInUser = (fn, done, error) => {
+  cognito.generateUser().then(({user, token}) => {
+    fn(user, token).then(() => {
+      cognito.deleteUser({Username: user.username}).then(() => {
+        done();
+      });
+    });
+  }).catch(err => {
+    cognito.deleteUser({Username: user.username}).then(() => {
+      error(err);
+    });
+  });
+};
+
+const createList = token => () => axios({
+  method: 'POST',
+  url: `${API_URL}/lists`,
+  headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json'},
+  data: {
+    "title": "Test",
+    "description": "Integration Test List",
+    "category": "Integration",
+    "public": true
+  }
 });
 
 test('Create & Retrieve List', (t) => {
   t.plan(9);
 
-  cognito.generateUser().then(({user, token}) => {
-    axios({
-      method: 'POST',
-      url: `${API_URL}/lists`,
-      headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json'},
-      data: {
-        "title": "Test",
-        "description": "Integration Test List",
-        "category": "Integration",
-        "public": true
-      }
-    }).then(res => {
+  withLoggedInUser((user, token) => {
+    return createList(token)().then(res => {
       t.equal(res.status, 201, 'should be 201');
       t.equal(res.statusText, 'Created', 'should be Created');
       t.ok(res.data.listId, 'has list id');
@@ -43,57 +56,29 @@ test('Create & Retrieve List', (t) => {
         headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json'}
       }).then(res => {
         t.equal(res.status, 200, 'should be 200');
-        t.equal(res.data.Title, 'Test');
-        t.equal(res.data.Description, 'Integration Test List');
-        t.equal(res.data.Category, 'Integration');
-        t.equal(res.data.Public, true);
-      });
-
-      cognito.deleteUser({Username: user.username}).then(() => {
-        t.pass('DONE!');
-      });
-    }).catch(err => {
-      cognito.deleteUser({Username: user.username}).then(() => {
-        t.fail(err.response.statusText);
+        t.equal(res.data.Title, 'Test', 'Title should be set');
+        t.equal(res.data.Description, 'Integration Test List', 'Description should be set');
+        t.equal(res.data.Category, 'Integration','Category should be set');
+        t.equal(res.data.Public, true, 'Public should be set');
       });
     });
-  });
+  }, () => t.pass('DONE!'), err => t.fail(err.response.statusText));
 });
 
 test('Retrieve all lists for user', (t) => {
   t.plan(3);
 
-  const createList = token => () => axios({
-    method: 'POST',
-    url: `${API_URL}/lists`,
-    headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json'},
-    data: {
-      "title": "Test",
-      "description": "Integration Test List",
-      "category": "Integration",
-      "public": truecreate()
-    }
-  });
-
-  cognito.generateUser().then(({user, token}) => {
+  withLoggedInUser((user, token) => {
     const create = createList(token);
-    Promise.all([create(), create(), create()]).then(() => {
+    return Promise.all([create(), create(), create()]).then(() => {
       axios({
         method: 'GET',
         url: `${API_URL}/lists`,
         headers: {'Authorization': `Bearer ${token}`, 'accept': 'application/json'}
       }).then(res => {
         t.equal(res.status, 200, 'should be 200');
-        t.equal(res.data.length, 3);
-      });
-
-      cognito.deleteUser({Username: user.username}).then(() => {
-        t.pass('DONE!');
-      });
-    }).catch(err => {
-      cognito.deleteUser({Username: user.username}).then(() => {
-        t.fail(err.response.statusText);
+        t.equal(res.data.length, 3, 'should return all lists');
       });
     });
-  });
+  }, () => t.pass('DONE!'), err => t.fail(err.response.statusText));
 });
