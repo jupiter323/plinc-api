@@ -9,8 +9,8 @@
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "prettier": "prettier --write '**/*.{js,jsx,md,json,css}'",
-    "api:validate": "npm run swagger:bundle && swagger-cli validate .ci/spec/bundle.spec.json",
-    "swagger:bundle": "swagger-cli bundle .ci/spec/spec.yml -o .ci/spec/bundle.spec.json",
+    "api:validate": "npm run swagger:bundle && swagger-cli validate swagger/bundle.spec.json",
+    "swagger:bundle": "swagger-cli bundle .ci/spec/spec.yml -o swagger/bundle.spec.json",
     "swagger:start": "webpack-dev-server --open --inline --mode development",
     "swagger:build": "webpack --mode production"
   },
