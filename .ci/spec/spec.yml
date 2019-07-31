@@ -5,7 +5,7 @@ info:
   description: Use this API to retrieve wish lists and items for Plinc.app
   version: 0.0.1
 
-host: qu6nngtgae.execute-api.us-east-1.amazonaws.com
+host: k41mups91j.execute-api.us-east-1.amazonaws.com
 basePath: /prod
 schemes:
   - https
@@ -29,36 +29,36 @@ paths:
         - Lists
       description: Create a list for the current logged in user.
       parameters:
-      - in: body
-        name: list
-        description: list to be created
-        schema:
-          $ref: '#/definitions/List'
+        - in: body
+          name: list
+          description: list to be created
+          schema:
+            $ref: '#/definitions/List'
       responses:
         201:
           description: Created
           headers:
             Access-Control-Allow-Headers:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Methods:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Origin:
-              type: "string"
+              type: 'string'
         403:
           description: Access Denied
           headers:
             Access-Control-Allow-Headers:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Methods:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Origin:
-              type: "string"
+              type: 'string'
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       security:
-      - Authorizer: []
+        - Authorizer: []
       x-amazon-apigateway-integration:
         type: aws_proxy
         httpMethod: 'POST'
@@ -96,26 +96,26 @@ paths:
           description: Created
           headers:
             Access-Control-Allow-Headers:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Methods:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Origin:
-              type: "string"
+              type: 'string'
         403:
           description: Access Denied
           headers:
             Access-Control-Allow-Headers:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Methods:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Origin:
-              type: "string"
+              type: 'string'
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       security:
-      - Authorizer: []
+        - Authorizer: []
       x-amazon-apigateway-integration:
         type: aws_proxy
         httpMethod: 'POST'
@@ -165,17 +165,17 @@ paths:
           description: Found
           headers:
             Access-Control-Allow-Headers:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Methods:
-              type: "string"
+              type: 'string'
             Access-Control-Allow-Origin:
-              type: "string"
+              type: 'string'
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       security:
-      - Authorizer: []
+        - Authorizer: []
       x-amazon-apigateway-integration:
         type: aws_proxy
         httpMethod: 'POST'
