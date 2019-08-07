@@ -1,9 +1,9 @@
 {
-  "StackName": "plinc-api-pipeline-spike",
+  "StackName": "plinc-api-pipeline",
   "Parameters": [
     {
       "ParameterKey": "Project",
-      "ParameterValue": "PlincAPISpike"
+      "ParameterValue": "PlincAPI"
     },
     {
       "ParameterKey": "Repository",
@@ -11,7 +11,7 @@
     },
     {
       "ParameterKey": "Branch",
-      "ParameterValue": "api-spike"
+      "ParameterValue": "master"
     }
   ],
   "DisableRollback": false,
