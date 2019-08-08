@@ -28,13 +28,13 @@ class Lists {
   }
 
   create(params) {
-    const listid = uuid.v4();
+    const listId = uuid.v4();
     return new Promise((resolve, reject) => {
       this.dynamodb
-        .putItem(this.list({ ...params, listid }))
+        .putItem(this.list({ ...params, listId }))
         .promise()
         .then(() => {
-          resolve({ listid });
+          resolve({ listId });
         })
         .catch((err) => {
           reject(err);
