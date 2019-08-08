@@ -16,5 +16,9 @@ List:
 Item:
   type: object
   properties:
+    listId:
+      type: string
     description:
       type: string
+  required:
+    - listId

@@ -267,11 +267,18 @@ paths:
               method.response.header.Access-Control-Allow-Methods: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
 
+  /items/{listId}:
     get:
       summary: Get items for a list
       tags:
         - Items
       description: Get all items for a given list.
+      parameters:
+        - name: listId
+          in: path
+          description: id of the list to get items for
+          required: true
+          type: string
       responses:
         200:
           description: Found

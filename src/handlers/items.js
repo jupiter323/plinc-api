@@ -1,5 +1,3 @@
-const decode = require('jwt-claims');
-
 const Items = require('../repositories/items');
 
 const lists = new Items(process.env.ITEMS_TABLE_NAME);
@@ -13,14 +11,8 @@ const headers = {
 
 module.exports.create = (event, context, callback) => {
   if (event.body !== null && event.body !== undefined) {
-    const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
-
-    const body = JSON.parse(event.body);
-
-    body.possessor = claims['cognito:username'];
-
     lists
-      .create(body)
+      .create(event.body)
       .then((response) => {
         callback(null, {
           statusCode: 201,
