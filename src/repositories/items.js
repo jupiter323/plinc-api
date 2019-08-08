@@ -18,7 +18,6 @@ class Items {
   }
 
   item(props) {
-    console.log('props', props);
     return {
       TableName: this.tableName,
       Item: pack(props),
@@ -27,11 +26,9 @@ class Items {
   }
 
   create(params) {
-    console.log('PARAMS', params);
     const itemId = uuid.v4();
     return new Promise((resolve, reject) => {
       const item = this.item({ ...JSON.parse(params), itemId });
-      console.log('ITEM to create:', item);
       this.dynamodb
         .putItem(item)
         .promise()

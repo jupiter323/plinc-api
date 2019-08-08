@@ -124,6 +124,8 @@ Resources:
           KeyType: HASH
         - AttributeName: ItemId
           KeyType: RANGE
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
 
   CreateFunction:
     Type: AWS::Serverless::Function
@@ -215,6 +217,40 @@ Resources:
         Variables:
           ITEMS_TABLE_NAME: !Ref ItemsTableName
 
+  ItemStreamFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/streams/items.handler
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:DescribeStream
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:ListStreams
+            Effect: Allow
+            Resource: !GetAtt Lists.Arn
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
+
+  ItemTableStream:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 1
+      Enabled: True
+      EventSourceArn:
+        Fn::GetAtt: [Items, StreamArn]
+      FunctionName:
+        Fn::GetAtt: [ItemStreamFunction, Arn]
+      StartingPosition: LATEST
+
   CreateLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -243,6 +279,12 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${GetAllItemsFunction}'
+      RetentionInDays: 1
+
+  ItemStreamFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ItemStreamFunction}'
       RetentionInDays: 1
 
   ApiUrlParameter:
