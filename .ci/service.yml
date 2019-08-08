@@ -221,7 +221,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: src/streams/items.handler
+      Handler: src/streams/item.handler
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
