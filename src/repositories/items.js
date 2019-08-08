@@ -8,6 +8,7 @@ const schema = {
   Description: 'S',
 };
 
+const pack = utils.pack(schema);
 const unpack = utils.unpack(schema);
 
 class Items {
@@ -19,7 +20,7 @@ class Items {
   item(props) {
     return {
       TableName: this.tableName,
-      Item: utils.pack(schema, props),
+      Item: pack(props),
       ReturnConsumedCapacity: 'TOTAL',
     };
   }

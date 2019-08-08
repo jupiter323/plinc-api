@@ -11,6 +11,7 @@ const schema = {
   Public: 'BOOL',
 };
 
+const pack = utils.pack(schema);
 const unpack = utils.unpack(schema);
 
 class Lists {
@@ -22,7 +23,7 @@ class Lists {
   list(props) {
     return {
       TableName: this.tableName,
-      Item: utils.pack(schema, props),
+      Item: pack(props),
       ReturnConsumedCapacity: 'TOTAL',
     };
   }

@@ -60,10 +60,10 @@ test('Create & Retrieve List', (t) => {
           headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
         }).then((response) => {
           t.equal(response.status, 200, 'should be 200');
-          t.equal(response.data.Title, 'Test', 'Title should be set');
-          t.equal(response.data.Description, 'Integration Test List', 'Description should be set');
-          t.equal(response.data.Category, 'Integration', 'Category should be set');
-          t.equal(response.data.Public, true, 'Public should be set');
+          t.equal(response.data.title, 'Test', 'Title should be set');
+          t.equal(response.data.description, 'Integration Test List', 'Description should be set');
+          t.equal(response.data.category, 'Integration', 'Category should be set');
+          t.equal(response.data.public, true, 'Public should be set');
         });
       });
     },
