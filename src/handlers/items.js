@@ -1,6 +1,6 @@
 const Items = require('../repositories/items');
 
-const lists = new Items(process.env.ITEMS_TABLE_NAME);
+const items = new Items(process.env.ITEMS_TABLE_NAME);
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -12,7 +12,7 @@ const headers = {
 module.exports.create = (event, context, callback) => {
   if (event.body !== null && event.body !== undefined) {
     console.log('event.body:', event.body);
-    lists
+    items
       .create(event.body)
       .then((response) => {
         callback(null, {
@@ -36,7 +36,7 @@ module.exports.getAll = (event, context, callback) => {
     listId: event.pathParameters.listId,
   };
 
-  lists
+  items
     .getAll(params)
     .then((response) => {
       callback(null, {
