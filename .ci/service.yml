@@ -230,12 +230,23 @@ Resources:
             Action:
               - dynamodb:GetItem
               - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt Lists.Arn
+        - Statement:
+            Action:
               - dynamodb:DescribeStream
               - dynamodb:GetRecords
               - dynamodb:GetShardIterator
               - dynamodb:ListStreams
             Effect: Allow
-            Resource: !GetAtt Lists.Arn
+            Resource: '*'
+        - Statement:
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource: arn:aws:logs:*:*:*
       Environment:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
