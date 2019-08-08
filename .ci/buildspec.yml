@@ -10,6 +10,10 @@ phases:
       - pip3 install awscli --upgrade --user
       - npm ci
 
+  pre_build:
+    commands:
+      - npm test
+
   build:
     commands:
       - export package=$(npm pack)
