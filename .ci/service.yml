@@ -33,6 +33,12 @@ Parameters:
     Description: |
       The name of the lists table in DynamoDB
 
+  ItemsTableName:
+    Type: String
+    MinLength: 3
+    Description: |
+      The name of the items table in DynamoDB
+
   DefinitionKey:
     Type: String
     MinLength: 3
@@ -58,11 +64,11 @@ Resources:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - 'apigateway.amazonaws.com'
-          Action: 'sts:AssumeRole'
+          - Effect: Allow
+            Principal:
+              Service:
+                - 'apigateway.amazonaws.com'
+            Action: 'sts:AssumeRole'
 
   PlincApi:
     Type: AWS::Serverless::Api
@@ -99,6 +105,26 @@ Resources:
         - AttributeName: ListId
           KeyType: RANGE
 
+  Items:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref ItemsTableName
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: ListId
+          AttributeType: S
+        - AttributeName: ItemId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ListId
+          KeyType: HASH
+        - AttributeName: ItemId
+          KeyType: RANGE
+
   CreateFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -117,6 +143,24 @@ Resources:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
 
+  CreateItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/handlers/items.create
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt Items.Arn
+      Environment:
+        Variables:
+          ITEMS_TABLE_NAME: !Ref ItemsTableName
+
   GetFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -124,13 +168,13 @@ Resources:
       Handler: src/index.get
       CodeUri: ../dist/package
       Policies:
-      - !Ref KeyAccessPolicy
-      - AWSLambdaBasicExecutionRole
-      - Statement:
-          Action:
-            - dynamodb:GetItem
-          Effect: Allow
-          Resource: !GetAtt Lists.Arn
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:GetItem
+            Effect: Allow
+            Resource: !GetAtt Lists.Arn
       Environment:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
@@ -142,21 +186,45 @@ Resources:
       Handler: src/index.getAll
       CodeUri: ../dist/package
       Policies:
-      - !Ref KeyAccessPolicy
-      - AWSLambdaBasicExecutionRole
-      - Statement:
-          Action:
-          - dynamodb:Query
-          Effect: Allow
-          Resource: !GetAtt Lists.Arn
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:Query
+            Effect: Allow
+            Resource: !GetAtt Lists.Arn
       Environment:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
+
+  GetAllItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/handlers/items.getAll
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:Query
+            Effect: Allow
+            Resource: !GetAtt Items.Arn
+      Environment:
+        Variables:
+          ITEMS_TABLE_NAME: !Ref ItemsTableName
 
   CreateLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${CreateFunction}'
+      RetentionInDays: 1
+
+  CreateItemLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${CreateItemFunction}'
       RetentionInDays: 1
 
   GetLogGroup:
@@ -169,6 +237,12 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${GetAllFunction}'
+      RetentionInDays: 1
+
+  GetAllItemsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetAllItemsFunction}'
       RetentionInDays: 1
 
   ApiUrlParameter:

@@ -130,9 +130,9 @@ Resources:
             - Name: Swagger
               RunOrder: 1
               InputArtifacts:
-              - Name: GitHubOutput
+                - Name: GitHubOutput
               OutputArtifacts:
-              - Name: SwaggerBuildOutput
+                - Name: SwaggerBuildOutput
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -168,6 +168,7 @@ Resources:
                   {
                     "Project": "ApiIntegrationTest",
                     "ListsTableName": "Plinc.${Project}.IntegrationTest.Lists",
+                    "ItemsTableName": "Plinc.${Project}.IntegrationTest.Items",
                     "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "build.json", "DEFINITION_KEY"] }
                   }
             - Name: Test
@@ -205,8 +206,8 @@ Resources:
                 Version: 1
               RoleArn: !Ref PipelineExecutionRole
               InputArtifacts:
-              - Name: GitHubOutput
-              - Name: BuildOutput
+                - Name: GitHubOutput
+                - Name: BuildOutput
               Configuration:
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
@@ -218,12 +219,13 @@ Resources:
                   {
                     "Project": "${Project}",
                     "ListsTableName": "Plinc.${Project}.Lists",
+                    "ItemsTableName": "Plinc.${Project}.Items",
                     "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "build.json", "DEFINITION_KEY"] }
                   }
             - Name: Swagger
               RunOrder: 1
               InputArtifacts:
-              - Name: SwaggerBuildOutput
+                - Name: SwaggerBuildOutput
               ActionTypeId:
                 Category: Deploy
                 Owner: AWS

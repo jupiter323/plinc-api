@@ -203,5 +203,126 @@ paths:
               method.response.header.Access-Control-Allow-Methods: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
 
+  /items:
+    post:
+      summary: Create a item
+      tags:
+        - Items
+      description: Create a item for the current logged in user.
+      parameters:
+        - in: body
+          name: item
+          description: item to be created
+          schema:
+            $ref: '#/definitions/Item'
+      responses:
+        201:
+          description: Created
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateItemFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    get:
+      summary: Get items for a list
+      tags:
+        - Items
+      description: Get all items for a given list.
+      responses:
+        200:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllItemsFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
 definitions:
   $ref: ./definitions.yml

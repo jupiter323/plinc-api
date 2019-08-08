@@ -10,5 +10,11 @@ List:
     public:
       type: boolean
   required:
-  - public
-  - title
+    - public
+    - title
+
+Item:
+  type: object
+  properties:
+    description:
+      type: string
