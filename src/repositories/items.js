@@ -26,11 +26,11 @@ class Items {
 
   create(params) {
     const itemId = uuid.v4();
+    const item = { ListId: params.listId, description: params.description, ItemId: itemId };
+    console.log('ITEM: ', item);
     return new Promise((resolve, reject) => {
       this.dynamodb
-        .putItem(
-          this.item({ ListId: params.listId, description: params.description, ItemId: itemId }),
-        )
+        .putItem(this.item(item))
         .promise()
         .then(() => {
           resolve({ itemId });
