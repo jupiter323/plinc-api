@@ -1,5 +1,5 @@
 const test = require('tape');
-const utils = require('./dynamo.utils');
+const Dynamo = require('./dynamo');
 
 test('Pack', (t) => {
   const schema = {
@@ -11,7 +11,7 @@ test('Pack', (t) => {
   t.plan(1);
 
   t.deepEqual(
-    utils.pack(schema)({
+    Dynamo.pack(schema)({
       listId: 'ID',
       itemId: 'ID',
       description: 'description',
@@ -31,7 +31,7 @@ test('Pack', (t) => {
   t.plan(1);
 
   t.deepEqual(
-    utils.unpack(schema)({
+    Dynamo.unpack(schema)({
       ListId: { S: 'ID' },
       ItemId: { S: 'ID' },
       Description: { S: 'description' },

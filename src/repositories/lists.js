@@ -1,6 +1,5 @@
 const uuid = require('uuid');
 const Dynamo = require('./dynamo');
-const utils = require('./dynamo.utils');
 
 const schema = {
   Possessor: 'S',
@@ -12,8 +11,8 @@ const schema = {
   NoOfItems: 'N',
 };
 
-const pack = utils.pack(schema);
-const unpack = utils.unpack(schema);
+const pack = Dynamo.pack(schema);
+const unpack = Dynamo.unpack(schema);
 
 class Lists {
   constructor(tableName) {
