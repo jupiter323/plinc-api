@@ -6,15 +6,15 @@ class Dynamo {
   }
 
   async put(item) {
-    return await this.dynamodb.putItem(item).promise();
+    return this.dynamodb.putItem(item).promise();
   }
 
   async query(params) {
-    return await this.dynamodb.query(params).promise();
+    return this.dynamodb.query(params).promise();
   }
 
   async get(params) {
-    return await this.dynamodb.getItem(params).promise();
+    return this.dynamodb.getItem(params).promise();
   }
 }
 

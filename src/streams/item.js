@@ -11,7 +11,7 @@ module.exports.handler = (event, context, callback) => {
 
         const list = await lists.get({ possessor, id: listId });
 
-        list.noOfItems = `${parseInt(list.noOfItems || 0) + 1}`;
+        list.noOfItems = `${parseInt(list.noOfItems || 0, 10) + 1}`;
 
         await lists.update(list);
       }
