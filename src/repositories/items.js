@@ -5,6 +5,7 @@ const utils = require('../dynamo.utils');
 const schema = {
   ListId: 'S',
   ItemId: 'S',
+  Possessor: 'S',
   Description: 'S',
 };
 

@@ -11,7 +11,6 @@ const headers = {
 
 module.exports.create = (event, context, callback) => {
   if (event.body !== null && event.body !== undefined) {
-    console.log('event.body:', event.body);
     items
       .create(event.body)
       .then((response) => {

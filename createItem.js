@@ -6,7 +6,13 @@ const Items = require('./src/repositories/items');
 const items = new Items(process.env.ITEMS_TABLE_NAME);
 
 items
-  .create({ listId: '238b0daa-adc0-4abd-b51e-206313cb5f3d', description: 'my item' })
+  .create(
+    JSON.stringify({
+      possessor: 'HarryPotter',
+      listId: '238b0daa-adc0-4abd-b51e-206313cb5f3d',
+      description: 'my item',
+    }),
+  )
   .then((response) => {
     console.log('Created', response);
   })

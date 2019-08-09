@@ -16,9 +16,12 @@ List:
 Item:
   type: object
   properties:
+    possessor:
+      type: string
     listId:
       type: string
     description:
       type: string
   required:
     - listId
+    - possessor
