@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const htmlWebpackTemplate = require('html-webpack-template');
 
 module.exports = {
-  entry: './swagger/lists.js',
+  entry: './swagger/index.js',
   output: {
     path: path.resolve(__dirname, '.swagger-dist'),
     filename: 'bundle.js',
