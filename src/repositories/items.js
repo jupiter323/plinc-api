@@ -29,7 +29,7 @@ class Items {
   create(params) {
     const itemId = uuid.v4();
     return new Promise((resolve, reject) => {
-      const item = this.item({ ...JSON.parse(params), itemId });
+      const item = this.item({ ...params, itemId });
       this.dynamodb
         .putItem(item)
         .promise()
