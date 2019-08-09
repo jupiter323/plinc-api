@@ -6,13 +6,10 @@ const Items = require('./src/repositories/items');
 const items = new Items(process.env.ITEMS_TABLE_NAME);
 
 items
-  .create({
-    possessor: 'HarryPotter',
-    listId: '238b0daa-adc0-4abd-b51e-206313cb5f3d',
-    description: 'my item',
-  })
+  .getAll({ possessor: 'HarryPotter', listId: '238b0daa-adc0-4abd-b51e-206313cb5f3d' })
   .then((response) => {
-    console.log('Created', response);
+    console.log('Response', response);
+    console.log('Found', response.length);
   })
   .catch((err) => {
     console.log('Error', err);

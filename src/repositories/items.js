@@ -1,6 +1,6 @@
 const uuid = require('uuid');
-const AWS = require('aws-sdk');
-const utils = require('../dynamo.utils');
+const Dynamo = require('./dynamo');
+const utils = require('./dynamo.utils');
 
 const schema = {
   ListId: 'S',
@@ -15,7 +15,7 @@ const unpack = utils.unpack(schema);
 class Items {
   constructor(tableName) {
     this.tableName = tableName;
-    this.dynamodb = new AWS.DynamoDB();
+    this.dynamodb = new Dynamo();
   }
 
   item(props) {
@@ -26,24 +26,15 @@ class Items {
     };
   }
 
-  create(params) {
+  async create(params) {
     const itemId = uuid.v4();
-    return new Promise((resolve, reject) => {
-      const item = this.item({ ...params, itemId });
-      this.dynamodb
-        .putItem(item)
-        .promise()
-        .then(() => {
-          resolve({ itemId });
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    const item = this.item({ ...params, itemId });
+    await this.dynamodb.put(item);
+    return { itemId };
   }
 
-  getAll(params) {
-    const query = {
+  async getAll(params) {
+    const q = {
       TableName: this.tableName,
       KeyConditionExpression: 'ListId = :listId',
       ExpressionAttributeValues: {
@@ -52,17 +43,8 @@ class Items {
       ReturnConsumedCapacity: 'TOTAL',
     };
 
-    return new Promise((resolve, reject) => {
-      this.dynamodb
-        .query(query)
-        .promise()
-        .then((response) => {
-          resolve(response.Items.map(unpack));
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    const response = await this.dynamodb.query(q);
+    return response.Items.map(unpack);
   }
 }
 

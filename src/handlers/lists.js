@@ -1,6 +1,6 @@
 const decode = require('jwt-claims');
 
-const Lists = require('./lists');
+const Lists = require('../repositories/lists');
 
 const lists = new Lists(process.env.LISTS_TABLE_NAME);
 

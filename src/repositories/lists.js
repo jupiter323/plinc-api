@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-const AWS = require('aws-sdk');
+const Dynamo = require('./dynamo');
 const utils = require('./dynamo.utils');
 
 const schema = {
@@ -9,6 +9,7 @@ const schema = {
   Description: 'S',
   Category: 'S',
   Public: 'BOOL',
+  NoOfItems: 'N',
 };
 
 const pack = utils.pack(schema);
@@ -17,7 +18,7 @@ const unpack = utils.unpack(schema);
 class Lists {
   constructor(tableName) {
     this.tableName = tableName;
-    this.dynamodb = new AWS.DynamoDB();
+    this.dynamodb = new Dynamo();
   }
 
   list(props) {
@@ -28,22 +29,20 @@ class Lists {
     };
   }
 
-  create(params) {
+  async create(params) {
     const listId = uuid.v4();
-    return new Promise((resolve, reject) => {
-      this.dynamodb
-        .putItem(this.list({ ...params, listId }))
-        .promise()
-        .then(() => {
-          resolve({ listId });
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    const list = this.list({ ...params, listId });
+    await this.dynamodb.put(list);
+    return { listId };
   }
 
-  get(params) {
+  async update(params) {
+    const list = this.list(params);
+    await this.dynamodb.put(list);
+    return params;
+  }
+
+  async get(params) {
     const query = {
       Key: {
         ListId: {
@@ -56,20 +55,11 @@ class Lists {
       TableName: this.tableName,
     };
 
-    return new Promise((resolve, reject) => {
-      this.dynamodb
-        .getItem(query)
-        .promise()
-        .then((response) => {
-          resolve(unpack(response.Item));
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    const response = await this.dynamodb.get(query);
+    return unpack(response.Item);
   }
 
-  getAll(params) {
+  async getAll(params) {
     const query = {
       TableName: this.tableName,
       KeyConditionExpression: 'Possessor = :possessor',
@@ -79,19 +69,8 @@ class Lists {
       ReturnConsumedCapacity: 'TOTAL',
     };
 
-    console.log('GET ALL', query);
-
-    return new Promise((resolve, reject) => {
-      this.dynamodb
-        .query(query)
-        .promise()
-        .then((response) => {
-          resolve(response.Items.map(unpack));
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    const response = await this.dynamodb.query(query);
+    return response.Items.map(unpack);
   }
 }
 
