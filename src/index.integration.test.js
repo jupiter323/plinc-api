@@ -51,7 +51,7 @@ const createItem = (token) => (listId) =>
     headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
     data: {
       listId,
-      price: 12.5,
+      price: 12,
       description: 'Integration Test Item',
     },
   });
