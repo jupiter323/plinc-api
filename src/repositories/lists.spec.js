@@ -18,6 +18,7 @@ test('Create', async (t) => {
           Title: { S: 'Title' },
           Description: { S: 'Description' },
           NoOfItems: { N: '0' },
+          Price: { N: '0.00' },
         },
         ReturnConsumedCapacity: 'TOTAL',
       },

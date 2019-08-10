@@ -9,6 +9,7 @@ const schema = {
   Category: 'S',
   Public: 'BOOL',
   NoOfItems: 'N',
+  Price: 'N',
 };
 
 const pack = Dynamo.pack(schema);
@@ -34,6 +35,7 @@ class Lists {
       ...params,
       listId,
       noOfItems: '0',
+      price: '0.00',
     });
     await this.dynamodb.put(list);
     return { listId };
