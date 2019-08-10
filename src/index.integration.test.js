@@ -113,13 +113,15 @@ test('Add item to a list', (t) => {
     (user, token) => {
       return createList(token)().then((listResponse) => {
         createItem(token)(listResponse.data.listId).then(() => {
-          axios({
-            method: 'GET',
-            url: `${API_URL}/lists/${user.username}/${listResponse.data.listId}`,
-            headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
-          }).then((res) => {
-            t.equal(res.data.noOfItems, '1', 'Increments NoOfItems when new item created');
-          });
+          setTimeout(() => {
+            axios({
+              method: 'GET',
+              url: `${API_URL}/lists/${user.username}/${listResponse.data.listId}`,
+              headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+            }).then((res) => {
+              t.equal(res.data.noOfItems, '1', 'Increments NoOfItems when new item created');
+            });
+          }, 2000);
         });
       });
     },
