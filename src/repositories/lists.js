@@ -35,10 +35,48 @@ class Lists {
     return { listId };
   }
 
-  async update(params) {
-    const list = this.list(params);
-    await this.dynamodb.put(list);
-    return params;
+  async increment(params) {
+    const query = {
+      TableName: this.tableName,
+      Key: {
+        ListId: {
+          S: params.id,
+        },
+        Possessor: {
+          S: params.possessor,
+        },
+      },
+      UpdateExpression: 'SET NoOfItems = NoOfItems + :incr',
+      ExpressionAttributeValues: {
+        ':incr': { N: '1' },
+      },
+      ReturnValues: 'ALL_NEW',
+    };
+
+    const response = await this.dynamodb.update(query);
+    return unpack(response.Attributes);
+  }
+
+  async decrement(params) {
+    const query = {
+      TableName: this.tableName,
+      Key: {
+        ListId: {
+          S: params.id,
+        },
+        Possessor: {
+          S: params.possessor,
+        },
+      },
+      UpdateExpression: 'SET NoOfItems = NoOfItems - :decr',
+      ExpressionAttributeValues: {
+        ':decr': { N: '1' },
+      },
+      ReturnValues: 'ALL_NEW',
+    };
+
+    const response = await this.dynamodb.update(query);
+    return unpack(response.Attributes);
   }
 
   async get(params) {

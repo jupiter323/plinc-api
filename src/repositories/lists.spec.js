@@ -137,3 +137,101 @@ test('Get All', async (t) => {
     'Maps Dynamo Response to App Response',
   );
 });
+
+test('Increment', async (t) => {
+  t.plan(2);
+
+  Dynamo.prototype.update = (query) => {
+    t.deepEqual(
+      query,
+      {
+        TableName: 'ListsTable',
+        Key: { ListId: { S: undefined }, Possessor: { S: 'Possessor' } },
+        UpdateExpression: 'SET NoOfItems = NoOfItems + :incr',
+        ExpressionAttributeValues: { ':incr': { N: '1' } },
+        ReturnValues: 'ALL_NEW',
+      },
+      'Updates and returns Items from Dynamo',
+    );
+
+    return {
+      Attributes: {
+        Title: { S: 'Title' },
+        Public: { BOOL: true },
+        Possessor: { S: 'Possessor' },
+        Description: { S: 'Description' },
+        NoOfItems: { N: '2' },
+        Category: { S: 'Category' },
+        ListId: { S: 'ListId' },
+      },
+    };
+  };
+
+  const response = await listsRepository.increment({
+    listId: 'ListId',
+    possessor: 'Possessor',
+  });
+
+  t.deepEqual(
+    response,
+    {
+      title: 'Title',
+      public: true,
+      possessor: 'Possessor',
+      description: 'Description',
+      noOfItems: '2',
+      category: 'Category',
+      listId: 'ListId',
+    },
+    'Maps Dynamo Response to App Response',
+  );
+});
+
+test('Decrement', async (t) => {
+  t.plan(2);
+
+  Dynamo.prototype.update = (query) => {
+    t.deepEqual(
+      query,
+      {
+        TableName: 'ListsTable',
+        Key: { ListId: { S: undefined }, Possessor: { S: 'Possessor' } },
+        UpdateExpression: 'SET NoOfItems = NoOfItems - :decr',
+        ExpressionAttributeValues: { ':decr': { N: '1' } },
+        ReturnValues: 'ALL_NEW',
+      },
+      'Updates and returns Items from Dynamo',
+    );
+
+    return {
+      Attributes: {
+        Title: { S: 'Title' },
+        Public: { BOOL: true },
+        Possessor: { S: 'Possessor' },
+        Description: { S: 'Description' },
+        NoOfItems: { N: '1' },
+        Category: { S: 'Category' },
+        ListId: { S: 'ListId' },
+      },
+    };
+  };
+
+  const response = await listsRepository.decrement({
+    listId: 'ListId',
+    possessor: 'Possessor',
+  });
+
+  t.deepEqual(
+    response,
+    {
+      title: 'Title',
+      public: true,
+      possessor: 'Possessor',
+      description: 'Description',
+      noOfItems: '1',
+      category: 'Category',
+      listId: 'ListId',
+    },
+    'Maps Dynamo Response to App Response',
+  );
+});

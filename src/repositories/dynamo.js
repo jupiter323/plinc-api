@@ -40,8 +40,8 @@ class Dynamo {
     };
   }
 
-  async put(item) {
-    return this.dynamodb.putItem(item).promise();
+  async put(params) {
+    return this.dynamodb.putItem(params).promise();
   }
 
   async query(params) {
@@ -50,6 +50,10 @@ class Dynamo {
 
   async get(params) {
     return this.dynamodb.getItem(params).promise();
+  }
+
+  async update(params) {
+    return this.dynamodb.updateItem(params).promise();
   }
 }
 
