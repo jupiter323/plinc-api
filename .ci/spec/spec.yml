@@ -5,7 +5,7 @@ info:
   description: Use this API to retrieve wish lists and items for Plinc.app
   version: 0.0.1
 
-host: k82c6sz3l1.execute-api.us-east-1.amazonaws.com
+host: 1q5r7zk3ye.execute-api.us-east-1.amazonaws.com
 basePath: /prod
 schemes:
   - https
