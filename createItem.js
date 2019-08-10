@@ -8,7 +8,7 @@ const items = new Items(process.env.ITEMS_TABLE_NAME);
 items
   .create({
     possessor: 'HarryPotter',
-    listId: '238b0daa-adc0-4abd-b51e-206313cb5f3d',
+    listId: 'd047cc01-d29c-4066-8b25-195521ee11b2',
     description: 'my item',
   })
   .then((response) => {

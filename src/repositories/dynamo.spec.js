@@ -6,6 +6,8 @@ test('Pack', (t) => {
     ListId: 'S',
     ItemId: 'S',
     Description: 'S',
+    Price: 'N',
+    Public: 'BOOL',
   };
 
   t.plan(1);
@@ -15,17 +17,27 @@ test('Pack', (t) => {
       listId: 'ID',
       itemId: 'ID',
       description: 'description',
+      public: false,
+      price: 12.99,
     }),
-    { ListId: { S: 'ID' }, ItemId: { S: 'ID' }, Description: { S: 'description' } },
+    {
+      ListId: { S: 'ID' },
+      ItemId: { S: 'ID' },
+      Description: { S: 'description' },
+      Price: { N: '12.99' },
+      Public: { BOOL: false },
+    },
     'Packs to Dynamo Query',
   );
 });
 
-test('Pack', (t) => {
+test('Unpack', (t) => {
   const schema = {
     ListId: 'S',
     ItemId: 'S',
     Description: 'S',
+    Price: 'N',
+    Public: 'BOOL',
   };
 
   t.plan(1);
@@ -35,11 +47,15 @@ test('Pack', (t) => {
       ListId: { S: 'ID' },
       ItemId: { S: 'ID' },
       Description: { S: 'description' },
+      Price: { N: '105.67' },
+      Public: { BOOL: true },
     }),
     {
       listId: 'ID',
       itemId: 'ID',
       description: 'description',
+      price: '105.67',
+      public: true,
     },
     'Unpacks from Dynamo Query',
   );

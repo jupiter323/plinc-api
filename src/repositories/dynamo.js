@@ -21,9 +21,13 @@ class Dynamo {
   static pack(schema) {
     return (params) => {
       return Object.keys(schema).reduce((acc, curr) => {
-        if (params[toCamelCase(curr)]) {
+        if (params.hasOwnProperty(toCamelCase(curr))) {
           const value = {};
-          value[schema[curr]] = params[toCamelCase(curr)];
+          if (schema[curr] === 'N') {
+            value[schema[curr]] = `${params[toCamelCase(curr)]}`;
+          } else {
+            value[schema[curr]] = params[toCamelCase(curr)];
+          }
           acc[curr] = value;
         }
         return acc;
