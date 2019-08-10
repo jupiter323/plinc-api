@@ -54,6 +54,8 @@ test('Get', async (t) => {
         Possessor: { S: 'Possessor' },
         Category: { S: 'Category' },
         ListId: { S: 'ListId' },
+        NoOfItems: { N: '0' },
+        Price: { N: '0.00' },
       },
     };
   };
@@ -72,6 +74,8 @@ test('Get', async (t) => {
       possessor: 'Possessor',
       category: 'Category',
       listId: 'ListId',
+      noOfItems: '0',
+      price: '0.00',
     },
     'Maps Dynamo Response to App Response',
   );
@@ -101,6 +105,8 @@ test('Get All', async (t) => {
           Possessor: { S: 'Possessor' },
           Category: { S: 'Category 1' },
           ListId: { S: 'ListId 1' },
+          NoOfItems: { N: '0' },
+          Price: { N: '0.00' },
         },
         {
           Title: { S: 'Title 2' },
@@ -108,6 +114,8 @@ test('Get All', async (t) => {
           Possessor: { S: 'Possessor' },
           Category: { S: 'Category 2' },
           ListId: { S: 'ListId 2' },
+          NoOfItems: { N: '0' },
+          Price: { N: '0.00' },
         },
       ],
     };
@@ -127,6 +135,8 @@ test('Get All', async (t) => {
         possessor: 'Possessor',
         category: 'Category 1',
         listId: 'ListId 1',
+        noOfItems: '0',
+        price: '0.00',
       },
       {
         title: 'Title 2',
@@ -134,6 +144,8 @@ test('Get All', async (t) => {
         possessor: 'Possessor',
         category: 'Category 2',
         listId: 'ListId 2',
+        noOfItems: '0',
+        price: '0.00',
       },
     ],
     'Maps Dynamo Response to App Response',
@@ -165,6 +177,7 @@ test('Increment', async (t) => {
         NoOfItems: { N: '2' },
         Category: { S: 'Category' },
         ListId: { S: 'ListId' },
+        Price: { N: '10.99' },
       },
     };
   };
@@ -184,6 +197,7 @@ test('Increment', async (t) => {
       noOfItems: '2',
       category: 'Category',
       listId: 'ListId',
+      price: '10.99',
     },
     'Maps Dynamo Response to App Response',
   );

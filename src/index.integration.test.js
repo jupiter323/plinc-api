@@ -76,7 +76,7 @@ test('Create & Retrieve List', (t) => {
           t.equal(response.data.category, 'Integration', 'Category should be set');
           t.equal(response.data.public, true, 'Public should be set');
           t.equal(response.data.noOfItems, '0', 'No items should be added');
-          t.equal(response.data.price, '0.00', 'Price should be 0');
+          t.equal(response.data.price, '0', 'Price should be 0');
         });
       });
     },
