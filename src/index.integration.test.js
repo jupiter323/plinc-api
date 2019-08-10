@@ -44,8 +44,19 @@ const createList = (token) => () =>
     },
   });
 
+const createItem = (token) => (listId) =>
+  axios({
+    method: 'POST',
+    url: `${API_URL}/items`,
+    headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+    data: {
+      listId,
+      description: 'Integration Test Item',
+    },
+  });
+
 test('Create & Retrieve List', (t) => {
-  t.plan(9);
+  t.plan(10);
 
   withLoggedInUser(
     (user, token) => {
@@ -64,6 +75,7 @@ test('Create & Retrieve List', (t) => {
           t.equal(response.data.description, 'Integration Test List', 'Description should be set');
           t.equal(response.data.category, 'Integration', 'Category should be set');
           t.equal(response.data.public, true, 'Public should be set');
+          t.equal(response.data.noOfItems, '0', 'No items should be added');
         });
       });
     },
@@ -86,6 +98,28 @@ test('Retrieve all lists for user', (t) => {
         }).then((res) => {
           t.equal(res.status, 200, 'should be 200');
           t.equal(res.data.length, 3, 'should return all lists');
+        });
+      });
+    },
+    () => t.pass('DONE!'),
+    (err) => t.fail(err.response.statusText),
+  );
+});
+
+test('Add item to a list', (t) => {
+  t.plan(2);
+
+  withLoggedInUser(
+    (user, token) => {
+      return createList(token)().then((listResponse) => {
+        createItem(token)(listResponse.data.listId).then(() => {
+          axios({
+            method: 'GET',
+            url: `${API_URL}/lists/${user.username}/${listResponse.data.listId}`,
+            headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+          }).then((res) => {
+            t.equal(res.data.noOfItems, '1', 'Increments NoOfItems when new item created');
+          });
         });
       });
     },
