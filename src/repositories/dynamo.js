@@ -1,3 +1,5 @@
+/* eslint-disable func-names */
+
 const AWS = require('aws-sdk');
 
 const toCamelCase = (str) => {
