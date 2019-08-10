@@ -17,6 +17,7 @@ test('Create', async (t) => {
           ListId: list.Item.ListId,
           Title: { S: 'Title' },
           Description: { S: 'Description' },
+          NoOfItems: { N: '0' },
         },
         ReturnConsumedCapacity: 'TOTAL',
       },

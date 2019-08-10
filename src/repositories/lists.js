@@ -30,7 +30,11 @@ class Lists {
 
   async create(params) {
     const listId = uuid.v4();
-    const list = this.list({ ...params, listId });
+    const list = this.list({
+      ...params,
+      listId,
+      noOfItems: '0',
+    });
     await this.dynamodb.put(list);
     return { listId };
   }
