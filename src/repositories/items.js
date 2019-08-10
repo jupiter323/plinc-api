@@ -6,6 +6,7 @@ const schema = {
   ItemId: 'S',
   Possessor: 'S',
   Description: 'S',
+  Price: 'N',
 };
 
 const pack = Dynamo.pack(schema);

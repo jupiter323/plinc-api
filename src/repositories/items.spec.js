@@ -17,6 +17,7 @@ test('Create', async (t) => {
           ItemId: item.Item.ItemId,
           Possessor: { S: 'Possessor' },
           Description: { S: 'Description' },
+          Price: { N: '0' },
         },
         ReturnConsumedCapacity: 'TOTAL',
       },
@@ -28,6 +29,7 @@ test('Create', async (t) => {
     possessor: 'Possessor',
     listId: 'ListId',
     description: 'Description',
+    price: '0',
   });
 });
 
@@ -52,11 +54,13 @@ test('Get All', async (t) => {
           ItemId: { S: 'ItemId1' },
           ListId: { S: 'ListId' },
           Description: { S: 'Item 1' },
+          Price: { N: '10.99' },
         },
         {
           ItemId: { S: 'ItemId2' },
           ListId: { S: 'ListId' },
           Description: { S: 'Item 2' },
+          Price: { N: '2.54' },
         },
       ],
     };
@@ -73,11 +77,13 @@ test('Get All', async (t) => {
         itemId: 'ItemId1',
         listId: 'ListId',
         description: 'Item 1',
+        price: '10.99',
       },
       {
         itemId: 'ItemId2',
         listId: 'ListId',
         description: 'Item 2',
+        price: '2.54',
       },
     ],
     'Maps Dynamo Response to App Response',

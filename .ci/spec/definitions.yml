@@ -20,5 +20,9 @@ Item:
       type: string
     description:
       type: string
+    price:
+      type: number
+      minimum: 0
   required:
     - listId
+    - price
