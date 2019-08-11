@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "sam local start-api -t .ci/service.yml",
-    "integration": "tape src/**/*.integration.test.js",
-    "test": "tape src/**/*.spec.js",
+    "test": "tape src/**/*.test.js",
+    "test:integration": "tape src/**/*.test.integration.js",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "prettier": "prettier --write '**/*.{js,jsx,md,json,css}'",

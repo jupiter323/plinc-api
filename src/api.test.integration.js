@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+
 const test = require('tape');
 const axios = require('axios');
 const cognito = require('./cognito');

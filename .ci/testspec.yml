@@ -9,4 +9,4 @@ phases:
   build:
     commands:
       - URL=$(jq -r -s '.[0].ApiUrl' $CODEBUILD_SRC_DIR_IntegrationTestDeployOutput/Outputs.json)
-      - API_URL=${URL} npm run integration
+      - API_URL=${URL} npm run test:integration

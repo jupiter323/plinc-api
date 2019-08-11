@@ -9,7 +9,7 @@ module.exports.handler = (event, context, callback) => {
         const listId = record.dynamodb.Keys.ListId.S;
         const possessor = record.dynamodb.NewImage.Possessor.S;
         const price = record.dynamodb.NewImage.Price.N;
-        
+
         await lists.increment({ possessor, id: listId, price });
       }
     });
