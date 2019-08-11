@@ -161,8 +161,8 @@ test('Increment', async (t) => {
       {
         TableName: 'ListsTable',
         Key: { ListId: { S: undefined }, Possessor: { S: 'Possessor' } },
-        UpdateExpression: 'SET NoOfItems = NoOfItems + :incr',
-        ExpressionAttributeValues: { ':incr': { N: '1' } },
+        UpdateExpression: 'SET NoOfItems = NoOfItems + :incr, Price = Price + :price',
+        ExpressionAttributeValues: { ':incr': { N: '1' }, ':price': { N: '10.99' } },
         ReturnValues: 'ALL_NEW',
       },
       'Updates and returns Items from Dynamo',
@@ -184,6 +184,7 @@ test('Increment', async (t) => {
 
   const response = await listsRepository.increment({
     listId: 'ListId',
+    price: '10.99',
     possessor: 'Possessor',
   });
 
@@ -212,8 +213,8 @@ test('Decrement', async (t) => {
       {
         TableName: 'ListsTable',
         Key: { ListId: { S: undefined }, Possessor: { S: 'Possessor' } },
-        UpdateExpression: 'SET NoOfItems = NoOfItems - :decr',
-        ExpressionAttributeValues: { ':decr': { N: '1' } },
+        UpdateExpression: 'SET NoOfItems = NoOfItems - :decr, Price = Price - :price',
+        ExpressionAttributeValues: { ':decr': { N: '1' }, ':price': { N: '10.99' } },
         ReturnValues: 'ALL_NEW',
       },
       'Updates and returns Items from Dynamo',
@@ -228,12 +229,14 @@ test('Decrement', async (t) => {
         NoOfItems: { N: '1' },
         Category: { S: 'Category' },
         ListId: { S: 'ListId' },
+        Price: { N: '10.99' },
       },
     };
   };
 
   const response = await listsRepository.decrement({
     listId: 'ListId',
+    price: '10.99',
     possessor: 'Possessor',
   });
 
@@ -247,6 +250,7 @@ test('Decrement', async (t) => {
       noOfItems: '1',
       category: 'Category',
       listId: 'ListId',
+      price: '10.99',
     },
     'Maps Dynamo Response to App Response',
   );

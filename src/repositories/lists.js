@@ -52,9 +52,10 @@ class Lists {
           S: params.possessor,
         },
       },
-      UpdateExpression: 'SET NoOfItems = NoOfItems + :incr',
+      UpdateExpression: 'SET NoOfItems = NoOfItems + :incr, Price = Price + :price',
       ExpressionAttributeValues: {
         ':incr': { N: '1' },
+        ':price': { N: params.price },
       },
       ReturnValues: 'ALL_NEW',
     };
@@ -74,9 +75,10 @@ class Lists {
           S: params.possessor,
         },
       },
-      UpdateExpression: 'SET NoOfItems = NoOfItems - :decr',
+      UpdateExpression: 'SET NoOfItems = NoOfItems - :decr, Price = Price - :price',
       ExpressionAttributeValues: {
         ':decr': { N: '1' },
+        ':price': { N: params.price },
       },
       ReturnValues: 'ALL_NEW',
     };
