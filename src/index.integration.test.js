@@ -44,14 +44,14 @@ const createList = (token) => () =>
     },
   });
 
-const createItem = (token) => (listId) =>
+const createItem = (token) => (listId) => (price) =>
   axios({
     method: 'POST',
     url: `${API_URL}/items`,
     headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
     data: {
       listId,
-      price: 12,
+      price,
       description: 'Integration Test Item',
     },
   });
@@ -109,19 +109,25 @@ test('Retrieve all lists for user', (t) => {
 });
 
 test('Add item to a list', (t) => {
-  t.plan(2);
+  t.plan(3);
 
   withLoggedInUser(
     (user, token) => {
       return createList(token)().then((listResponse) => {
-        createItem(token)(listResponse.data.listId).then(() => {
+        const create = createItem(token)(listResponse.data.listId);
+        Promise.all([create(12), create(12.5)]).then(() => {
           setTimeout(() => {
             axios({
               method: 'GET',
               url: `${API_URL}/lists/${user.username}/${listResponse.data.listId}`,
               headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
             }).then((res) => {
-              t.equal(res.data.noOfItems, '1', 'Increments NoOfItems when new item created');
+              t.equal(res.data.noOfItems, '2', 'Increments NoOfItems when new item created');
+              t.equal(
+                res.data.price,
+                '24.5',
+                'Increments Price by item price when new item created',
+              );
             });
           }, 2000);
         });
