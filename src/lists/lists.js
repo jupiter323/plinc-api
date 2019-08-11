@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-const Dynamo = require('./dynamo');
+const Dynamo = require('../dynamo');
 
 const schema = {
   Possessor: 'S',

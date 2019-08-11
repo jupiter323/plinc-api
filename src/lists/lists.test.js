@@ -1,5 +1,5 @@
 const test = require('tape');
-const Dynamo = require('./dynamo');
+const Dynamo = require('../dynamo');
 const Lists = require('./lists');
 
 const listsRepository = new Lists('ListsTable');

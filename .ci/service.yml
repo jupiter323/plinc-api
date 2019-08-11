@@ -131,7 +131,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: src/handlers/lists.create
+      Handler: src/lists/handler.create
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
@@ -149,7 +149,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: src/handlers/items.create
+      Handler: src/items/handler.create
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
@@ -167,7 +167,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: src/handlers/lists.get
+      Handler: src/lists/handler.get
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
@@ -185,7 +185,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: src/handlers/lists.getAll
+      Handler: src/lists/handler.getAll
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
@@ -203,7 +203,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: src/handlers/items.getAll
+      Handler: src/items/handlers.getAll
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
@@ -221,7 +221,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: src/streams/item.handler
+      Handler: src/items/stream.handler
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy

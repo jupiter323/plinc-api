@@ -1,8 +1,8 @@
 const decode = require('jwt-claims');
 
-const Lists = require('../repositories/lists');
+const Items = require('./items');
 
-const lists = new Lists(process.env.LISTS_TABLE_NAME);
+const items = new Items(process.env.ITEMS_TABLE_NAME);
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -17,9 +17,11 @@ module.exports.create = (event, context, callback) => {
 
     const body = JSON.parse(event.body);
 
+    console.log('body:', body);
+
     body.possessor = claims['cognito:username'];
 
-    lists
+    items
       .create(body)
       .then((response) => {
         callback(null, {
@@ -38,35 +40,13 @@ module.exports.create = (event, context, callback) => {
   }
 };
 
-module.exports.get = (event, context, callback) => {
+module.exports.getAll = (event, context, callback) => {
   const params = {
-    id: event.pathParameters.id,
-    possessor: event.pathParameters.possessor,
+    listId: event.pathParameters.listId,
   };
 
-  lists
-    .get(params)
-    .then((response) => {
-      callback(null, {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify(response),
-      });
-    })
-    .catch((err) => {
-      callback(err, {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify(err),
-      });
-    });
-};
-
-module.exports.getAll = (event, context, callback) => {
-  const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
-
-  lists
-    .getAll({ possessor: claims['cognito:username'] })
+  items
+    .getAll(params)
     .then((response) => {
       callback(null, {
         statusCode: 200,

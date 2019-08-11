@@ -1,4 +1,4 @@
-const Lists = require('../repositories/lists');
+const Lists = require('../lists/lists');
 
 const lists = new Lists(process.env.LISTS_TABLE_NAME);
 
