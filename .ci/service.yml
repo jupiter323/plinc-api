@@ -203,7 +203,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs10.x
-      Handler: src/items/handlers.getAll
+      Handler: src/items/handler.getAll
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy
