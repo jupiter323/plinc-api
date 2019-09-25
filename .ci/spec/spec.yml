@@ -267,7 +267,7 @@ paths:
               method.response.header.Access-Control-Allow-Methods: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
 
-  /items/{listId}:
+  /list/{listId}/items:
     get:
       summary: Get items for a list
       tags:
