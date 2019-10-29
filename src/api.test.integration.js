@@ -58,6 +58,13 @@ const createItem = (token) => (listId) => (price) =>
     },
   });
 
+const deleteItem = (token) => (listId) => (itemId) =>
+  axios({
+    method: 'DELETE',
+    url: `${API_URL}/list/${listId}/items/${itemId}`,
+    headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+  });
+
 test('Create & Retrieve List', (t) => {
   t.plan(11);
 
@@ -137,5 +144,75 @@ test('Add item to a list', (t) => {
     },
     () => t.pass('DONE!'),
     (err) => t.fail(err.response.statusText),
+  );
+});
+
+test('Add item to a list', (t) => {
+  t.plan(3);
+
+  withLoggedInUser(
+    (user, token) => {
+      return createList(token)().then((listResponse) => {
+        const create = createItem(token)(listResponse.data.listId);
+        Promise.all([create(12), create(12.5)]).then(() => {
+          setTimeout(() => {
+            axios({
+              method: 'GET',
+              url: `${API_URL}/lists/${user.username}/${listResponse.data.listId}`,
+              headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+            }).then((res) => {
+              t.equal(res.data.noOfItems, '2', 'Increments NoOfItems when new item created');
+              t.equal(
+                res.data.price,
+                '24.5',
+                'Increments Price by item price when new item created',
+              );
+            });
+          }, 2000);
+        });
+      });
+    },
+    () => t.pass('DONE!'),
+    (err) => t.fail(err.response.statusText),
+  );
+});
+
+test('Remove item from a list', (t) => {
+  t.plan(3);
+
+  withLoggedInUser(
+    (user, token) => {
+      return createList(token)().then((listResponse) => {
+        const { listId } = listResponse.data;
+        const create = createItem(token)(listId);
+        Promise.all([create(12), create(12)]).then((createResponse) => {
+          const { itemId } = createResponse[0].data;
+          setTimeout(() => {
+            Promise.all([deleteItem(token)(listId)(itemId)])
+              .then(() => {
+                setTimeout(() => {
+                  axios({
+                    method: 'GET',
+                    url: `${API_URL}/lists/${user.username}/${listResponse.data.listId}`,
+                    headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+                  }).then((res) => {
+                    t.equal(res.data.noOfItems, '1', 'Decrements NoOfItems when item deleted');
+                    t.equal(
+                      res.data.price,
+                      '12',
+                      'Decrements Price by item price when new item deleted',
+                    );
+                  });
+                }, 2000);
+              }, 2000)
+              .catch((err) => {
+                console.log(err);
+              });
+          }, 2000);
+        });
+      });
+    },
+    () => t.pass('DONE!'),
+    (err) => t.fail(err),
   );
 });

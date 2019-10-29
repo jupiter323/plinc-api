@@ -217,6 +217,24 @@ Resources:
         Variables:
           ITEMS_TABLE_NAME: !Ref ItemsTableName
 
+  DeleteItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/items/handler.delete
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource: !GetAtt Items.Arn
+      Environment:
+        Variables:
+          ITEMS_TABLE_NAME: !Ref ItemsTableName
+
   ItemStreamFunction:
     Type: AWS::Serverless::Function
     Properties:

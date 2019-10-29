@@ -89,3 +89,33 @@ test('Get All', async (t) => {
     'Maps Dynamo Response to App Response',
   );
 });
+
+test('Delete', async (t) => {
+  t.plan(1);
+
+  Dynamo.prototype.delete = (item) => {
+    t.deepEqual(
+      item,
+      {
+        TableName: 'ItemsTable',
+        Key: {
+          ListId: { S: 'ListId' },
+          ItemId: item.Key.ItemId,
+        },
+        ConditionExpression: 'Possessor = :possessor',
+        ExpressionAttributeValues: {
+          ':possessor': { S: 'Possessor' },
+        },
+        ReturnConsumedCapacity: 'TOTAL',
+        ReturnValues: 'ALL_OLD',
+      },
+      'Item Deleted from Dynamo',
+    );
+  };
+
+  await itemsRepository.delete({
+    listId: 'ListId',
+    itemId: 'ItemId1',
+    possessor: 'Possessor',
+  });
+});

@@ -61,6 +61,10 @@ class Dynamo {
   async update(params) {
     return this.dynamodb.updateItem(params).promise();
   }
+
+  async delete(params) {
+    return this.dynamodb.deleteItem(params).promise();
+  }
 }
 
 module.exports = Dynamo;

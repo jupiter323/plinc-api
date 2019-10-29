@@ -46,6 +46,24 @@ class Items {
     const response = await this.dynamodb.query(q);
     return response.Items.map(unpack);
   }
+
+  async delete(params) {
+    const q = {
+      TableName: this.tableName,
+      Key: {
+        ListId: { S: params.listId },
+        ItemId: { S: params.itemId },
+      },
+      ConditionExpression: 'Possessor = :possessor',
+      ExpressionAttributeValues: {
+        ':possessor': { S: params.possessor },
+      },
+      ReturnConsumedCapacity: 'TOTAL',
+      ReturnValues: 'ALL_OLD',
+    };
+    const response = await this.dynamodb.delete(q);
+    return { response };
+  }
 }
 
 module.exports = Items;
