@@ -7,7 +7,7 @@ const Items = require('../items');
 const items = new Items(process.env.ITEMS_TABLE_NAME);
 
 items
-  .getAll({ possessor: 'HarryPotter', listId: '238b0daa-adc0-4abd-b51e-206313cb5f3d' })
+  .getAll({ possessor: 'HarryPotter', listId: '01999c0c-781d-4432-8f86-66f08e9a59c6' })
   .then((response) => {
     console.log('Response', response);
     console.log('Found', response.length);

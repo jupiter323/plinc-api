@@ -65,6 +65,13 @@ const deleteItem = (token) => (listId) => (itemId) =>
     headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
   });
 
+const deleteList = (token) => (user) => (listId) =>
+  axios({
+    method: 'DELETE',
+    url: `${API_URL}/lists/${user.username}/${listId}`,
+    headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+  });
+
 test('Create & Retrieve List', (t) => {
   t.plan(11);
 
@@ -202,6 +209,50 @@ test('Remove item from a list', (t) => {
                       '12',
                       'Decrements Price by item price when new item deleted',
                     );
+                  });
+                }, 2000);
+              }, 2000)
+              .catch((err) => {
+                console.log(err);
+              });
+          }, 2000);
+        });
+      });
+    },
+    () => t.pass('DONE!'),
+    (err) => t.fail(err),
+  );
+});
+
+test('Remove list', (t) => {
+  t.plan(3);
+
+  withLoggedInUser(
+    (user, token) => {
+      return createList(token)().then((listResponse) => {
+        const { listId } = listResponse.data;
+        const create = createItem(token)(listId);
+        Promise.all([create(12), create(12)]).then(() => {
+          setTimeout(() => {
+            Promise.all([deleteList(token)(user)(listId)])
+              .then(() => {
+                setTimeout(() => {
+                  axios({
+                    method: 'GET',
+                    url: `${API_URL}/lists/${user.username}/${listId}`,
+                    headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+                  }).then((res) => {
+                    t.looseEqual(res.data, {}, 'No list found');
+                  });
+                }, 2000);
+
+                setTimeout(() => {
+                  axios({
+                    method: 'GET',
+                    url: `${API_URL}/list/${listId}/items`,
+                    headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+                  }).then((res) => {
+                    t.looseEqual(res.data, {}, 'No item found');
                   });
                 }, 2000);
               }, 2000)

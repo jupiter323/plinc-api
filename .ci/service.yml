@@ -104,6 +104,8 @@ Resources:
           KeyType: HASH
         - AttributeName: ListId
           KeyType: RANGE
+      StreamSpecification:
+        StreamViewType: OLD_IMAGE
 
   Items:
     Type: AWS::DynamoDB::Table
@@ -199,6 +201,65 @@ Resources:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
 
+  DeleteListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/lists/handler.delete
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource: !GetAtt Lists.Arn
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
+
+  ListStreamFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/lists/stream.handler
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:DescribeStream
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:ListStreams
+              - dynamodb:Query
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource: '*'
+        - Statement:
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource: arn:aws:logs:*:*:*
+      Environment:
+        Variables:
+          ITEMS_TABLE_NAME: !Ref ItemsTableName
+
+  ListTableStream:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 1
+      Enabled: True
+      EventSourceArn:
+        Fn::GetAtt: [Lists, StreamArn]
+      FunctionName:
+        Fn::GetAtt: [ListStreamFunction, Arn]
+      StartingPosition: LATEST
+
   GetAllItemsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -255,6 +316,7 @@ Resources:
               - dynamodb:GetRecords
               - dynamodb:GetShardIterator
               - dynamodb:ListStreams
+              - dynamodb:GetItem
             Effect: Allow
             Resource: '*'
         - Statement:

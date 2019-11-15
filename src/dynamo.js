@@ -37,6 +37,9 @@ class Dynamo {
 
   static unpack(schema) {
     return (params) => {
+      if (params === undefined) {
+        return {};
+      }
       return Object.keys(params).reduce((acc, curr) => {
         if (schema[curr]) {
           acc[toCamelCase(curr)] = params[curr][schema[curr]];

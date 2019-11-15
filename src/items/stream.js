@@ -10,13 +10,21 @@ module.exports.handler = (event, context, callback) => {
         const possessor = record.dynamodb.NewImage.Possessor.S;
         const price = record.dynamodb.NewImage.Price.N;
 
-        await lists.increment({ possessor, id: listId, price });
+        try {
+          await lists.increment({ possessor, id: listId, price });
+        } catch {
+          console.log('No List');
+        }
       } else if (record.eventName === 'REMOVE' && record.eventSource === 'aws:dynamodb') {
         const listId = record.dynamodb.Keys.ListId.S;
         const possessor = record.dynamodb.OldImage.Possessor.S;
         const price = record.dynamodb.OldImage.Price.N;
 
-        await lists.decrement({ possessor, id: listId, price });
+        try {
+          await lists.decrement({ possessor, id: listId, price });
+        } catch {
+          console.log('No List');
+        }
       }
     });
     callback(null, 'done');

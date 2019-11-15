@@ -161,6 +161,7 @@ test('Increment', async (t) => {
       {
         TableName: 'ListsTable',
         Key: { ListId: { S: undefined }, Possessor: { S: 'Possessor' } },
+        ConditionExpression: 'attribute_exists(ListId)',
         UpdateExpression: 'SET NoOfItems = NoOfItems + :incr, Price = Price + :price',
         ExpressionAttributeValues: { ':incr': { N: '1' }, ':price': { N: '10.99' } },
         ReturnValues: 'ALL_NEW',
@@ -213,6 +214,7 @@ test('Decrement', async (t) => {
       {
         TableName: 'ListsTable',
         Key: { ListId: { S: undefined }, Possessor: { S: 'Possessor' } },
+        ConditionExpression: 'attribute_exists(ListId)',
         UpdateExpression: 'SET NoOfItems = NoOfItems - :decr, Price = Price - :price',
         ExpressionAttributeValues: { ':decr': { N: '1' }, ':price': { N: '10.99' } },
         ReturnValues: 'ALL_NEW',
@@ -254,4 +256,29 @@ test('Decrement', async (t) => {
     },
     'Maps Dynamo Response to App Response',
   );
+});
+
+test('Delete', async (t) => {
+  t.plan(1);
+
+  Dynamo.prototype.delete = (list) => {
+    t.deepEqual(list, {
+      TableName: 'ListsTable',
+      Key: {
+        ListId: { S: 'ListId' },
+        Possessor: { S: 'Possessor' },
+      },
+      ConditionExpression: 'Possessor = :possessor',
+      ExpressionAttributeValues: {
+        ':possessor': { S: 'Possessor' },
+      },
+      ReturnConsumedCapacity: 'TOTAL',
+      ReturnValues: 'ALL_OLD',
+    });
+  };
+
+  await listsRepository.delete({
+    possessor: 'Possessor',
+    id: 'ListId',
+  });
 });

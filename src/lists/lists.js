@@ -52,6 +52,7 @@ class Lists {
           S: params.possessor,
         },
       },
+      ConditionExpression: 'attribute_exists(ListId)',
       UpdateExpression: 'SET NoOfItems = NoOfItems + :incr, Price = Price + :price',
       ExpressionAttributeValues: {
         ':incr': { N: '1' },
@@ -75,6 +76,7 @@ class Lists {
           S: params.possessor,
         },
       },
+      ConditionExpression: 'attribute_exists(ListId)',
       UpdateExpression: 'SET NoOfItems = NoOfItems - :decr, Price = Price - :price',
       ExpressionAttributeValues: {
         ':decr': { N: '1' },
@@ -116,6 +118,25 @@ class Lists {
 
     const response = await this.dynamodb.query(query);
     return response.Items.map(unpack);
+  }
+
+  async delete(params) {
+    const q = {
+      TableName: this.tableName,
+      Key: {
+        ListId: { S: params.id },
+        Possessor: { S: params.possessor },
+      },
+      ConditionExpression: 'Possessor = :possessor',
+      ExpressionAttributeValues: {
+        ':possessor': { S: params.possessor },
+      },
+      ReturnConsumedCapacity: 'TOTAL',
+      ReturnValues: 'ALL_OLD',
+    };
+
+    const response = await this.dynamodb.delete(q);
+    return response;
   }
 }
 
