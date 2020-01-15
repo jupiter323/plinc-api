@@ -10,6 +10,7 @@ const schema = {
   Public: 'BOOL',
   NoOfItems: 'N',
   Price: 'N',
+  Background: 'S',
 };
 
 const pack = Dynamo.pack(schema);

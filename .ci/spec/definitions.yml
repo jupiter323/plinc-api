@@ -9,6 +9,8 @@ List:
       type: string
     public:
       type: boolean
+    background:
+      type: string
   required:
     - public
     - title
