@@ -39,9 +39,12 @@ module.exports.create = (event, context, callback) => {
 };
 
 module.exports.get = (event, context, callback) => {
+  const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
+  const possessor = claims['cognito:username'];
+
   const params = {
     id: event.pathParameters.id,
-    possessor: event.pathParameters.possessor,
+    possessor,
   };
 
   lists

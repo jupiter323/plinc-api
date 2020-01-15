@@ -143,18 +143,13 @@ paths:
               method.response.header.Access-Control-Allow-Methods: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
 
-  /lists/{possessor}/{id}:
+  /lists/{id}:
     get:
       summary: Get list
       tags:
         - Lists
       description: Get a single list for a user
       parameters:
-        - name: possessor
-          in: path
-          description: user of the list to get
-          required: true
-          type: string
         - name: id
           in: path
           description: id of the list to get
@@ -209,11 +204,6 @@ paths:
         - Lists
       description: Deletes a list.
       parameters:
-        - name: possessor
-          in: path
-          description: user of the list to get
-          required: true
-          type: string
         - name: id
           in: path
           description: id of the list
