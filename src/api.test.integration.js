@@ -11,7 +11,7 @@ const { API_URL } = process.env;
 test('UnAuthenticated', (t) => {
   t.plan(2);
 
-  axios.get(`${API_URL}/lists/possessor/id`).catch((err) => {
+  axios.get(`${API_URL}/lists/id`).catch((err) => {
     t.equal(err.response.status, 401, 'should be 401');
     t.equal(err.response.data.message, 'Unauthorized', 'message should be Unauthorized');
   });
@@ -65,10 +65,10 @@ const deleteItem = (token) => (listId) => (itemId) =>
     headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
   });
 
-const deleteList = (token) => (user) => (listId) =>
+const deleteList = (token) => (listId) =>
   axios({
     method: 'DELETE',
-    url: `${API_URL}/lists/${user.username}/${listId}`,
+    url: `${API_URL}/lists/${listId}`,
     headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
   });
 
@@ -84,7 +84,7 @@ test('Create & Retrieve List', (t) => {
 
         axios({
           method: 'GET',
-          url: `${API_URL}/lists/${user.username}/${res.data.listId}`,
+          url: `${API_URL}/lists/${res.data.listId}`,
           headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
         }).then((response) => {
           t.equal(response.status, 200, 'should be 200');
@@ -135,7 +135,7 @@ test('Add item to a list', (t) => {
           setTimeout(() => {
             axios({
               method: 'GET',
-              url: `${API_URL}/lists/${user.username}/${listResponse.data.listId}`,
+              url: `${API_URL}/lists/${listResponse.data.listId}`,
               headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
             }).then((res) => {
               t.equal(res.data.noOfItems, '2', 'Increments NoOfItems when new item created');
@@ -165,7 +165,7 @@ test('Add item to a list', (t) => {
           setTimeout(() => {
             axios({
               method: 'GET',
-              url: `${API_URL}/lists/${user.username}/${listResponse.data.listId}`,
+              url: `${API_URL}/lists/${listResponse.data.listId}`,
               headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
             }).then((res) => {
               t.equal(res.data.noOfItems, '2', 'Increments NoOfItems when new item created');
@@ -200,7 +200,7 @@ test('Remove item from a list', (t) => {
                 setTimeout(() => {
                   axios({
                     method: 'GET',
-                    url: `${API_URL}/lists/${user.username}/${listResponse.data.listId}`,
+                    url: `${API_URL}/lists/${listResponse.data.listId}`,
                     headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
                   }).then((res) => {
                     t.equal(res.data.noOfItems, '1', 'Decrements NoOfItems when item deleted');
@@ -234,12 +234,12 @@ test('Remove list', (t) => {
         const create = createItem(token)(listId);
         Promise.all([create(12), create(12)]).then(() => {
           setTimeout(() => {
-            Promise.all([deleteList(token)(user)(listId)])
+            Promise.all([deleteList(token)(listId)])
               .then(() => {
                 setTimeout(() => {
                   axios({
                     method: 'GET',
-                    url: `${API_URL}/lists/${user.username}/${listId}`,
+                    url: `${API_URL}/lists/${listId}`,
                     headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
                   }).then((res) => {
                     t.looseEqual(res.data, {}, 'No list found');
