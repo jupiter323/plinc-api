@@ -86,6 +86,33 @@ module.exports.getAll = (event, context, callback) => {
     });
 };
 
+module.exports.update = (event, context, callback) => {
+  const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
+
+  const params = {
+    ...JSON.parse(event.body),
+    id: event.pathParameters.id,
+    possessor: claims['cognito:username'],
+  };
+
+  lists
+    .update(params)
+    .then((response) => {
+      callback(null, {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(response),
+      });
+    })
+    .catch((err) => {
+      callback(err, {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify(err),
+      });
+    });
+};
+
 module.exports.delete = (event, context, callback) => {
   const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
   const possessor = claims['cognito:username'];

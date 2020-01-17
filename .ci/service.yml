@@ -219,6 +219,24 @@ Resources:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
 
+  UpdateListFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/lists/handler.update
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt Lists.Arn
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
+
   ListStreamFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -375,6 +393,12 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${ItemStreamFunction}'
+      RetentionInDays: 1
+
+  UpdateListFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${UpdateListFunction}'
       RetentionInDays: 1
 
   ApiUrlParameter:

@@ -42,6 +42,14 @@ class Lists {
     return { listId };
   }
 
+  async update(params) {
+    const list = this.list({
+      ...params,
+    });
+    await this.dynamodb.put(list);
+    return list;
+  }
+
   async increment(params) {
     const query = {
       TableName: this.tableName,
