@@ -39,6 +39,12 @@ Parameters:
     Description: |
       The name of the items table in DynamoDB
 
+  VouchersTableName:
+    Type: String
+    MinLength: 3
+    Description: |
+      The name of the vouchers table in DynamoDB
+
   DefinitionKey:
     Type: String
     MinLength: 3
@@ -129,6 +135,28 @@ Resources:
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
 
+  Vouchers:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref VouchersTableName
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: PromotionID
+          AttributeType: S
+        - AttributeName: AdvertiserID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: AdvertiserID
+          KeyType: HASH
+        - AttributeName: PromotionID
+          KeyType: RANGE
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
   CreateFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -164,6 +192,24 @@ Resources:
       Environment:
         Variables:
           ITEMS_TABLE_NAME: !Ref ItemsTableName
+
+  CreateVoucherFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/vouchers/handler.create
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt Vouchers.Arn
+      Environment:
+        Variables:
+          VOUCHERS_TABLE_NAME: !Ref VouchersTableName
 
   GetFunction:
     Type: AWS::Serverless::Function
@@ -359,6 +405,42 @@ Resources:
         Fn::GetAtt: [ItemStreamFunction, Arn]
       StartingPosition: LATEST
 
+  GetVoucherFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/vouchers/handler.get
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:GetItem
+            Effect: Allow
+            Resource: !GetAtt Vouchers.Arn
+      Environment:
+        Variables:
+          VOUCHERS_TABLE_NAME: !Ref VouchersTableName
+
+  GetAllVouchersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/vouchers/handler.getAll
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:Query
+            Effect: Allow
+            Resource: !GetAtt Vouchers.Arn
+      Environment:
+        Variables:
+          VOUCHERS_TABLE_NAME: !Ref VouchersTableName
+
   CreateLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -369,6 +451,12 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${CreateItemFunction}'
+      RetentionInDays: 1
+
+  CreateVoucherLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${CreateVoucherFunction}'
       RetentionInDays: 1
 
   GetLogGroup:
@@ -387,6 +475,18 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${GetAllItemsFunction}'
+      RetentionInDays: 1
+
+  GetVoucherLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetVoucherFunction}'
+      RetentionInDays: 1
+
+  GetAllVouchersLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetAllVouchersFunction}'
       RetentionInDays: 1
 
   ItemStreamFunctionLogGroup:

@@ -517,5 +517,181 @@ paths:
               method.response.header.Access-Control-Allow-Methods: "'*'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
 
+  /vouchers:
+    post:
+      summary: Create a voucher
+      tags:
+        - Vouchers
+      description: Create a voucher for the current logged in user.
+      parameters:
+        - in: body
+          name: voucher
+          description: voucher to be created
+          schema:
+            $ref: '#/definitions/Voucher'
+      responses:
+        201:
+          description: Created
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateVoucherFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    get:
+      summary: Get vouchers
+      tags:
+        - Vouchers
+      description: Get all vouchers for the current logged in user.
+      responses:
+        201:
+          description: Created
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllVouchersFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /vouchers/{id}:
+    get:
+      summary: Get voucher
+      tags:
+        - Vouchers
+      description: Get a single voucher for a user
+      parameters:
+        - name: id
+          in: path
+          description: id of the voucher to get
+          required: true
+          type: string
+      responses:
+        200:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetVoucherFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
 definitions:
   $ref: ./definitions.yml
