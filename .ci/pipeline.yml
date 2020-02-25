@@ -221,7 +221,7 @@ Resources:
                     "Project": "${Project}",
                     "ListsTableName": "Plinc.${Project}.Lists",
                     "ItemsTableName": "Plinc.${Project}.Items",
-                    "VouchersTableName": "Plinc.${Project}.Vouchers",
+                    "VouchersTableName": "Plinc.${Project}.IntegrationTest.Vouchers",
                     "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "build.json", "DEFINITION_KEY"] }
                   }
             - Name: Swagger
