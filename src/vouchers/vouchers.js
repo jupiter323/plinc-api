@@ -26,7 +26,7 @@ class Vouchers {
   async create(params) {
     const PromotionID = uuid.v4();
     const AdvertiserID = '612219';
-    const voucher = this.list({
+    const voucher = this.voucher({
       ...params,
       PromotionID,
       AdvertiserID,
