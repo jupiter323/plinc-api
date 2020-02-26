@@ -28,14 +28,3 @@ Item:
   required:
     - listId
     - price
-
-Voucher:
-  type: object
-  properties:
-    id:
-      type: string
-    advertiserID:
-      type: string
-  required:
-    - id
-    - advertiserID

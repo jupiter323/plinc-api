@@ -169,7 +169,6 @@ Resources:
                     "Project": "ApiIntegrationTest",
                     "ListsTableName": "Plinc.${Project}.IntegrationTest.Lists",
                     "ItemsTableName": "Plinc.${Project}.IntegrationTest.Items",
-                    "VouchersTableName": "Plinc.${Project}.IntegrationTest.Vouchers",
                     "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "build.json", "DEFINITION_KEY"] }
                   }
             - Name: Test
@@ -221,7 +220,6 @@ Resources:
                     "Project": "${Project}",
                     "ListsTableName": "Plinc.${Project}.Lists",
                     "ItemsTableName": "Plinc.${Project}.Items",
-                    "VouchersTableName": "Plinc.${Project}.Vouchers",
                     "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "build.json", "DEFINITION_KEY"] }
                   }
             - Name: Swagger
@@ -236,7 +234,6 @@ Resources:
               Configuration:
                 BucketName: !Ref SwaggerUIBucket
                 Extract: true
-
   PipelineTrigger:
     Type: AWS::CodePipeline::Webhook
     Properties:
