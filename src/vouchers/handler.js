@@ -1,5 +1,3 @@
-const decode = require('jwt-claims');
-
 const Handler = require('./vouchers');
 
 const vouchers = new Handler(process.env.VOUCHERS_TABLE_NAME);
@@ -13,12 +11,7 @@ const headers = {
 
 module.exports.create = (event, context, callback) => {
   if (event.body !== null && event.body !== undefined) {
-    const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
-
-    const body = JSON.parse(event.body);
-
-    body.advertiserName = claims['cognito:username'];
-
+    const body = {};
     vouchers
       .create(body)
       .then((response) => {
