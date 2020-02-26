@@ -11,7 +11,7 @@ const headers = {
 
 module.exports.create = (event, context, callback) => {
   if (event.body !== null && event.body !== undefined) {
-    const body = {};
+    const body = { id: '222', advertiserID: '222' };
     vouchers
       .create(body)
       .then((response) => {

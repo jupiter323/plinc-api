@@ -58,6 +58,17 @@ const createItem = (token) => (listId) => (price) =>
     },
   });
 
+const createVoucher = (token) => (id) => (advertiserID) =>
+  axios({
+    method: 'POST',
+    url: `${API_URL}/vouchers`,
+    headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+    data: {
+      id,
+      advertiserID,
+    },
+  });
+
 const deleteItem = (token) => (listId) => (itemId) =>
   axios({
     method: 'DELETE',
@@ -94,6 +105,32 @@ test('Create & Retrieve List', (t) => {
           t.equal(response.data.public, true, 'Public should be set');
           t.equal(response.data.noOfItems, '0', 'No items should be added');
           t.equal(response.data.price, '0', 'Price should be 0');
+        });
+      });
+    },
+    () => t.pass('DONE!'),
+    (err) => t.fail(err.response.statusText),
+  );
+});
+
+test('Create & Retrieve Voucher', (t) => {
+  t.plan(11);
+
+  withLoggedInUser(
+    (user, token) => {
+      return createVoucher(token)().then((res) => {
+        t.equal(res.status, 201, 'should be 201');
+        t.equal(res.statusText, 'Created', 'should be Created');
+        t.ok(res.data.PromotionID, 'has voucher id');
+
+        axios({
+          method: 'GET',
+          url: `${API_URL}/vouchers/${res.data.PromotionID}`,
+          headers: { Authorization: `Bearer ${token}`, accept: 'application/json' },
+        }).then((response) => {
+          t.equal(response.status, 200, 'should be 200');
+          t.equal(response.data.PromotionID, '000', 'Title should be set');
+          t.equal(response.data.AdvertiserID, '000', 'Advertiser should be set');
         });
       });
     },
