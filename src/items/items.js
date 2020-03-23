@@ -30,7 +30,7 @@ class Items {
     const itemId = uuid.v4();
     const item = this.item({ itemId, ...params });
     await this.dynamodb.put(item);
-    return { itemId: params.itemId || itemId };
+    return { itemId };
   }
 
   async getAll(params) {
