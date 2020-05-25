@@ -1,5 +1,5 @@
 {
-  "name": "plinc-api",
+  "name": "plinc-api-dev",
   "version": "1.0.0",
   "description": "API for Plinc.app",
   "main": "index.js",
@@ -55,7 +55,10 @@
   },
   "dependencies": {
     "aws-sdk": "^2.493.0",
+    "bcrypt": "^4.0.1",
+    "canvas": "^2.6.1",
     "jwt-claims": "^1.0.1",
+    "merge-images": "^2.0.0",
     "swagger-ui": "^3.24.2",
     "uuid": "3.3.2"
   },

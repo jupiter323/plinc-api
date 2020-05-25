@@ -17,8 +17,6 @@ module.exports.create = (event, context, callback) => {
 
     const body = JSON.parse(event.body);
 
-    console.log('body:', body);
-
     body.possessor = claims['cognito:username'];
 
     items

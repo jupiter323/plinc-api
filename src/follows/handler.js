@@ -1,8 +1,8 @@
 const decode = require('jwt-claims');
 
-const Handler = require('./lists');
+const Handler = require('./follows');
 
-const lists = new Handler(process.env.LISTS_TABLE_NAME);
+const follows = new Handler(process.env.FOLLOWS_TABLE_NAME);
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -19,7 +19,7 @@ module.exports.create = (event, context, callback) => {
 
     body.possessor = claims['cognito:username'];
 
-    lists
+    follows
       .create(body)
       .then((response) => {
         callback(null, {
@@ -38,17 +38,11 @@ module.exports.create = (event, context, callback) => {
   }
 };
 
-module.exports.get = (event, context, callback) => {
+module.exports.getAll = (event, context, callback) => {
   const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
-  const possessor = claims['cognito:username'];
-
-  const params = {
-    id: event.pathParameters.id,
-    possessor,
-  };
-
-  lists
-    .get(params)
+  const { possessor } = event.pathParameters || {};
+  follows
+    .getAll({ possessor: possessor || claims['cognito:username'] })
     .then((response) => {
       callback(null, {
         statusCode: 200,
@@ -65,46 +59,10 @@ module.exports.get = (event, context, callback) => {
     });
 };
 
-function isOtherUserWishlist(possessor) {
-  return possessor;
-}
-
-module.exports.getAll = (event, context, callback) => {
-  const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
-  const { possessor } = event.pathParameters || {};
-  lists
-    .getAll({ possessor: possessor || claims['cognito:username'] })
-    .then((response) => {
-      const responseLists = isOtherUserWishlist(possessor)
-        ? response.filter((list) => list.public)
-        : response;
-
-      callback(null, {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify(responseLists),
-      });
-    })
-    .catch((err) => {
-      callback(err, {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify(err),
-      });
-    });
-};
-
-module.exports.update = (event, context, callback) => {
-  const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
-
-  const params = {
-    ...JSON.parse(event.body),
-    id: event.pathParameters.id,
-    possessor: claims['cognito:username'],
-  };
-
-  lists
-    .update(params)
+module.exports.getFollowers = (event, context, callback) => {
+  const { followUser } = event.pathParameters;
+  follows
+    .getByFollowUser({ followUser })
     .then((response) => {
       callback(null, {
         statusCode: 200,
@@ -126,11 +84,11 @@ module.exports.delete = (event, context, callback) => {
   const possessor = claims['cognito:username'];
 
   const params = {
-    id: event.pathParameters.id,
+    followUser: event.pathParameters.followUser,
     possessor,
   };
 
-  lists
+  follows
     .delete(params)
     .then((response) => {
       callback(null, {

@@ -1,8 +1,8 @@
 const decode = require('jwt-claims');
 
-const Handler = require('./lists');
+const Handler = require('./users');
 
-const lists = new Handler(process.env.LISTS_TABLE_NAME);
+const users = new Handler(process.env.USERS_TABLE_NAME);
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -12,15 +12,16 @@ const headers = {
 };
 
 module.exports.create = (event, context, callback) => {
+  const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
+
   if (event.body !== null && event.body !== undefined) {
-    const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
-
     const body = JSON.parse(event.body);
-
-    body.possessor = claims['cognito:username'];
-
-    lists
-      .create(body)
+    const params = {
+      ...body,
+      possessor: claims['cognito:username'],
+    };
+    users
+      .create(params)
       .then((response) => {
         callback(null, {
           statusCode: 201,
@@ -47,7 +48,7 @@ module.exports.get = (event, context, callback) => {
     possessor,
   };
 
-  lists
+  users
     .get(params)
     .then((response) => {
       callback(null, {
@@ -65,24 +66,41 @@ module.exports.get = (event, context, callback) => {
     });
 };
 
-function isOtherUserWishlist(possessor) {
-  return possessor;
-}
-
 module.exports.getAll = (event, context, callback) => {
-  const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
-  const { possessor } = event.pathParameters || {};
-  lists
-    .getAll({ possessor: possessor || claims['cognito:username'] })
-    .then((response) => {
-      const responseLists = isOtherUserWishlist(possessor)
-        ? response.filter((list) => list.public)
-        : response;
+  // const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
 
+  users
+    .getByClientId({ clientId: event.pathParameters.clientId })
+    .then((response) => {
       callback(null, {
         statusCode: 200,
         headers,
-        body: JSON.stringify(responseLists),
+        body: JSON.stringify(response),
+      });
+    })
+    .catch((err) => {
+      callback(err, {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify(err),
+      });
+    });
+};
+
+module.exports.getUserId = (event, context, callback) => {
+  const claims = decode(event.headers.Authorization.replace('Bearer ', ''));
+
+  users
+    .getUser({ possessor: claims['cognito:username'] })
+    .then((response) => {
+      callback(null, {
+        statusCode: 201,
+        headers,
+        body: JSON.stringify(
+          response.map((item) => {
+            return { userId: item.userId };
+          })[0],
+        ),
       });
     })
     .catch((err) => {
@@ -99,11 +117,11 @@ module.exports.update = (event, context, callback) => {
 
   const params = {
     ...JSON.parse(event.body),
-    id: event.pathParameters.id,
+    userId: event.pathParameters.id,
     possessor: claims['cognito:username'],
   };
 
-  lists
+  users
     .update(params)
     .then((response) => {
       callback(null, {
@@ -130,7 +148,7 @@ module.exports.delete = (event, context, callback) => {
     possessor,
   };
 
-  lists
+  users
     .delete(params)
     .then((response) => {
       callback(null, {

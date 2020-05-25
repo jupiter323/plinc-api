@@ -25,7 +25,7 @@ Parameters:
   Branch:
     Type: String
     Description: Branch to use from the repository.
-    Default: master
+    Default: apis
 
   ArtifactStore:
     Type: AWS::SSM::Parameter::Value<String>
@@ -169,6 +169,9 @@ Resources:
                     "Project": "ApiIntegrationTest",
                     "ListsTableName": "Plinc.${Project}.IntegrationTest.Lists",
                     "ItemsTableName": "Plinc.${Project}.IntegrationTest.Items",
+                    "UsersTableName": "Plinc.${Project}.IntegrationTest.Users",
+                    "DownVotesTableName": "Plinc.${Project}.IntegrationTest.DownVotes",
+                    "FollowsTableName": "Plinc.${Project}.IntegrationTest.Follows",
                     "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "build.json", "DEFINITION_KEY"] }
                   }
             - Name: Test
@@ -220,6 +223,9 @@ Resources:
                     "Project": "${Project}",
                     "ListsTableName": "Plinc.${Project}.Lists",
                     "ItemsTableName": "Plinc.${Project}.Items",
+                    "UsersTableName": "Plinc.${Project}.Users",
+                    "DownVotesTableName": "Plinc.${Project}.DownVotes",
+                    "FollowsTableName": "Plinc.${Project}.Follows",
                     "DefinitionKey": { "Fn::GetParam": ["BuildOutput", "build.json", "DEFINITION_KEY"] }
                   }
             - Name: Swagger

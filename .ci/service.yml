@@ -3,7 +3,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Transform: 'AWS::Serverless-2016-10-31'
 
 Description: |
-  Plinc API
+  Plinc API DEV
 
 Parameters:
   Project:
@@ -39,6 +39,24 @@ Parameters:
     Description: |
       The name of the items table in DynamoDB
 
+  UsersTableName:
+    Type: String
+    MinLength: 3
+    Description: |
+      The name of the users table in DynamoDB
+
+  DownVotesTableName:
+    Type: String
+    MinLength: 3
+    Description: |
+      The name of the downvotes table in DynamoDB
+
+  FollowsTableName:
+    Type: String
+    MinLength: 3
+    Description: |
+      The name of the follows table in DynamoDB
+
   DefinitionKey:
     Type: String
     MinLength: 3
@@ -50,7 +68,7 @@ Globals:
     Cors: "'*'"
 
 Resources:
-  PlincApiRole:
+  PlincApiDevRole:
     Type: 'AWS::IAM::Role'
     Properties:
       Policies:
@@ -70,7 +88,7 @@ Resources:
                 - 'apigateway.amazonaws.com'
             Action: 'sts:AssumeRole'
 
-  PlincApi:
+  PlincApiDev:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
@@ -129,6 +147,70 @@ Resources:
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
 
+  Users:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref UsersTableName
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: UserId
+          AttributeType: S
+        - AttributeName: Possessor
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Possessor
+          KeyType: HASH
+        - AttributeName: UserId
+          KeyType: RANGE
+      StreamSpecification:
+        StreamViewType: OLD_IMAGE
+
+  DownVotes:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref DownVotesTableName
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: DownVoteId
+          AttributeType: S
+        - AttributeName: Possessor
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Possessor
+          KeyType: HASH
+        - AttributeName: DownVoteId
+          KeyType: RANGE
+      StreamSpecification:
+        StreamViewType: OLD_IMAGE
+
+  Follows:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref FollowsTableName
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: true
+      AttributeDefinitions:
+        - AttributeName: FollowUser
+          AttributeType: S
+        - AttributeName: Possessor
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Possessor
+          KeyType: HASH
+        - AttributeName: FollowUser
+          KeyType: RANGE
+
   CreateFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -164,6 +246,102 @@ Resources:
       Environment:
         Variables:
           ITEMS_TABLE_NAME: !Ref ItemsTableName
+
+  CreateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/users/handler.create
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt Users.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableName
+
+  CreateDownVoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/downVotes/handler.create
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt DownVotes.Arn
+      Environment:
+        Variables:
+          DOWNVOTES_TABLE_NAME: !Ref DownVotesTableName
+
+  CreateFollowFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/follows/handler.create
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt Follows.Arn
+      Environment:
+        Variables:
+          FOLLOWS_TABLE_NAME: !Ref FollowsTableName
+
+  UserStreamFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/users/stream.handler
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:DescribeStream
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:ListStreams
+              - dynamodb:Query
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource: '*'
+        - Statement:
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource: arn:aws:logs:*:*:*
+      Environment:
+        Variables:
+          LISTS_TABLE_NAME: !Ref ListsTableName
+          DOWNVOTES_TABLE_NAME: !Ref DownVotesTableName
+
+  UserTableStream:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 1
+      Enabled: True
+      EventSourceArn:
+        Fn::GetAtt: [Users, StreamArn]
+      FunctionName:
+        Fn::GetAtt: [UserStreamFunction, Arn]
+      StartingPosition: LATEST
 
   GetFunction:
     Type: AWS::Serverless::Function
@@ -201,6 +379,114 @@ Resources:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
 
+  GetAllUsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/users/handler.getAll
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:Scan
+            Effect: Allow
+            Resource: !GetAtt Users.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableName
+
+  GetAllDownVotesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/downVotes/handler.getAll
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:Query
+            Effect: Allow
+            Resource: !GetAtt DownVotes.Arn
+      Environment:
+        Variables:
+          DOWNVOTES_TABLE_NAME: !Ref DownVotesTableName
+
+  GetAllFollowsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/follows/handler.getAll
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:Query
+            Effect: Allow
+            Resource: !GetAtt Follows.Arn
+      Environment:
+        Variables:
+          FOLLOWS_TABLE_NAME: !Ref FollowsTableName
+
+  GetAllFollowersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/follows/handler.getFollowers
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:Scan
+            Effect: Allow
+            Resource: !GetAtt Follows.Arn
+      Environment:
+        Variables:
+          FOLLOWS_TABLE_NAME: !Ref FollowsTableName
+
+  GetUserIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/users/handler.getUserId
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:Query
+            Effect: Allow
+            Resource: !GetAtt Users.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableName
+
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/users/handler.get
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:GetItem
+            Effect: Allow
+            Resource: !GetAtt Users.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableName
+
   DeleteListFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -219,6 +505,42 @@ Resources:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
 
+  DeleteDownVoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/downVotes/handler.delete
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource: !GetAtt DownVotes.Arn
+      Environment:
+        Variables:
+          DOWNVOTES_TABLE_NAME: !Ref DownVotesTableName
+
+  DeleteFollowFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/follows/handler.delete
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource: !GetAtt Follows.Arn
+      Environment:
+        Variables:
+          FOLLOWS_TABLE_NAME: !Ref FollowsTableName
+
   UpdateListFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -236,6 +558,24 @@ Resources:
       Environment:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
+
+  UpdateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs10.x
+      Handler: src/users/handler.update
+      CodeUri: ../dist/package
+      Policies:
+        - !Ref KeyAccessPolicy
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            Action:
+              - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt Users.Arn
+      Environment:
+        Variables:
+          USERS_TABLE_NAME: !Ref UsersTableName
 
   ListStreamFunction:
     Type: AWS::Serverless::Function
@@ -326,6 +666,7 @@ Resources:
         - Statement:
             Action:
               - dynamodb:UpdateItem
+              - dynamodb:PutItem
             Effect: Allow
             Resource: !GetAtt Lists.Arn
         - Statement:
@@ -335,6 +676,7 @@ Resources:
               - dynamodb:GetShardIterator
               - dynamodb:ListStreams
               - dynamodb:GetItem
+              - dynamodb:Query
             Effect: Allow
             Resource: '*'
         - Statement:
@@ -347,6 +689,7 @@ Resources:
       Environment:
         Variables:
           LISTS_TABLE_NAME: !Ref ListsTableName
+          ITEMS_TABLE_NAME: !Ref ItemsTableName
 
   ItemTableStream:
     Type: AWS::Lambda::EventSourceMapping
@@ -371,6 +714,24 @@ Resources:
       LogGroupName: !Sub '/aws/lambda/${CreateItemFunction}'
       RetentionInDays: 1
 
+  CreateDownVoteLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${CreateDownVoteFunction}'
+      RetentionInDays: 1
+
+  CreateFollowLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${CreateFollowFunction}'
+      RetentionInDays: 1
+
+  CreateUserLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${CreateUserFunction}'
+      RetentionInDays: 1
+
   GetLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -383,10 +744,58 @@ Resources:
       LogGroupName: !Sub '/aws/lambda/${GetAllFunction}'
       RetentionInDays: 1
 
+  GetAllUsersLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetAllUsersFunction}'
+      RetentionInDays: 1
+
+  GetAllDownVotesLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetAllDownVotesFunction}'
+      RetentionInDays: 1
+
+  GetAllFollowsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetAllFollowsFunction}'
+      RetentionInDays: 1
+
+  GetAllFollowersLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetAllFollowersFunction}'
+      RetentionInDays: 1
+
+  GetUserIdLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetUserIdFunction}'
+      RetentionInDays: 1
+
+  GetUserLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${GetUserFunction}'
+      RetentionInDays: 1
+
   GetAllItemsLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${GetAllItemsFunction}'
+      RetentionInDays: 1
+
+  DeleteDownVoteLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${DeleteDownVoteFunction}'
+      RetentionInDays: 1
+
+  DeleteFollowLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${DeleteFollowFunction}'
       RetentionInDays: 1
 
   ItemStreamFunctionLogGroup:
@@ -401,6 +810,12 @@ Resources:
       LogGroupName: !Sub '/aws/lambda/${UpdateListFunction}'
       RetentionInDays: 1
 
+  UpdateUserFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${UpdateUserFunction}'
+      RetentionInDays: 1
+
   ApiUrlParameter:
     Type: AWS::SSM::Parameter
     Properties:
@@ -411,9 +826,9 @@ Resources:
           Parameters:
             Project: !Ref Project
             Key: ApiUrl
-      Value: !Sub 'https://${PlincApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+      Value: !Sub 'https://${PlincApiDev}.execute-api.${AWS::Region}.amazonaws.com/prod'
 
 Outputs:
   ApiUrl:
     Description: 'Plinc API URL'
-    Value: !Sub 'https://${PlincApi}.execute-api.${AWS::Region}.amazonaws.com/prod'
+    Value: !Sub 'https://${PlincApiDev}.execute-api.${AWS::Region}.amazonaws.com/prod'

@@ -2,33 +2,20 @@ const uuid = require('uuid');
 const Dynamo = require('../dynamo');
 
 const schema = {
-  ListId: 'S',
-  ItemId: 'S',
   Possessor: 'S',
-  Description: 'S',
-  Price: 'N',
-  Image: 'S',
-  Brand: 'S',
-  Date: 'S',
-  OutOfStock: 'BOOL',
-  OnSale: 'BOOL',
-  NumberOfLikes: 'N',
-  Liked: 'BOOL',
-  Url: 'S',
-  LargeImage: 'S',
-  CatId: 'S',
+  DownVoteId: 'S',
 };
 
 const pack = Dynamo.pack(schema);
 const unpack = Dynamo.unpack(schema);
 
-class Items {
+class DownVotes {
   constructor(tableName) {
     this.tableName = tableName;
     this.dynamodb = new Dynamo();
   }
 
-  item(props) {
+  downVote(props) {
     return {
       TableName: this.tableName,
       Item: pack(props),
@@ -37,23 +24,26 @@ class Items {
   }
 
   async create(params) {
-    const itemId = uuid.v4();
-    const item = this.item({ itemId, ...params });
-    await this.dynamodb.put(item);
-    return { itemId: params.itemId || itemId };
+    const downVoteId = uuid.v4();
+    const downVote = this.downVote({
+      downVoteId,
+      ...params,
+    });
+    await this.dynamodb.put(downVote);
+    return { downVoteId: params.downVoteId || downVoteId };
   }
 
   async getAll(params) {
-    const q = {
+    const query = {
       TableName: this.tableName,
-      KeyConditionExpression: 'ListId = :listId',
+      KeyConditionExpression: 'Possessor = :possessor',
       ExpressionAttributeValues: {
-        ':listId': { S: params.listId },
+        ':possessor': { S: params.possessor },
       },
       ReturnConsumedCapacity: 'TOTAL',
     };
 
-    const response = await this.dynamodb.query(q);
+    const response = await this.dynamodb.query(query);
     return response.Items.map(unpack);
   }
 
@@ -61,8 +51,8 @@ class Items {
     const q = {
       TableName: this.tableName,
       Key: {
-        ListId: { S: params.listId },
-        ItemId: { S: params.itemId },
+        DownVoteId: { S: params.id },
+        Possessor: { S: params.possessor },
       },
       ConditionExpression: 'Possessor = :possessor',
       ExpressionAttributeValues: {
@@ -71,9 +61,10 @@ class Items {
       ReturnConsumedCapacity: 'TOTAL',
       ReturnValues: 'ALL_OLD',
     };
+
     const response = await this.dynamodb.delete(q);
-    return { response };
+    return response;
   }
 }
 
-module.exports = Items;
+module.exports = DownVotes;

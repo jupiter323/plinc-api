@@ -11,6 +11,8 @@ const schema = {
   NoOfItems: 'N',
   Price: 'N',
   Background: 'S',
+  Hashtags: 'S',
+  Image: 'S',
 };
 
 const pack = Dynamo.pack(schema);

@@ -1,11 +1,11 @@
 swagger: '2.0'
 
 info:
-  title: Plinc API
+  title: Plinc API DEV
   description: Use this API to retrieve wish lists and items for Plinc.app
   version: 0.0.1
 
-host: 1q5r7zk3ye.execute-api.us-east-1.amazonaws.com
+host: hre0dmjd4e.execute-api.us-east-1.amazonaws.com
 basePath: /prod
 schemes:
   - https
@@ -63,7 +63,7 @@ paths:
         type: aws_proxy
         httpMethod: 'POST'
         credentials:
-          Fn::Sub: '${PlincApiRole.Arn}'
+          Fn::Sub: '${PlincApiDevRole.Arn}'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateFunction.Arn}/invocations'
         responses:
@@ -120,7 +120,7 @@ paths:
         type: aws_proxy
         httpMethod: 'POST'
         credentials:
-          Fn::Sub: '${PlincApiRole.Arn}'
+          Fn::Sub: '${PlincApiDevRole.Arn}'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllFunction.Arn}/invocations'
         responses:
@@ -175,7 +175,7 @@ paths:
         type: aws_proxy
         httpMethod: 'POST'
         credentials:
-          Fn::Sub: '${PlincApiRole.Arn}'
+          Fn::Sub: '${PlincApiDevRole.Arn}'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetFunction.Arn}/invocations'
         responses:
@@ -234,7 +234,7 @@ paths:
         type: aws_proxy
         httpMethod: 'POST'
         credentials:
-          Fn::Sub: '${PlincApiRole.Arn}'
+          Fn::Sub: '${PlincApiDevRole.Arn}'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${UpdateListFunction.Arn}/invocations'
         responses:
@@ -297,9 +297,64 @@ paths:
         type: aws_proxy
         httpMethod: 'POST'
         credentials:
-          Fn::Sub: '${PlincApiRole.Arn}'
+          Fn::Sub: '${PlincApiDevRole.Arn}'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${DeleteListFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /lists/otheruser/{possessor}:
+    get:
+      summary: Get lists for otheruser
+      tags:
+        - Lists
+      description: Get lists for other user
+      parameters:
+        - name: possessor
+          in: path
+          description: id of the otheruser to get
+          required: true
+          type: string
+      responses:
+        200:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllFunction.Arn}/invocations'
         responses:
           default:
             statusCode: '200'
@@ -361,7 +416,7 @@ paths:
         type: aws_proxy
         httpMethod: 'POST'
         credentials:
-          Fn::Sub: '${PlincApiRole.Arn}'
+          Fn::Sub: '${PlincApiDevRole.Arn}'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateItemFunction.Arn}/invocations'
         responses:
@@ -425,7 +480,7 @@ paths:
         type: aws_proxy
         httpMethod: 'POST'
         credentials:
-          Fn::Sub: '${PlincApiRole.Arn}'
+          Fn::Sub: '${PlincApiDevRole.Arn}'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllItemsFunction.Arn}/invocations'
         responses:
@@ -494,9 +549,806 @@ paths:
         type: aws_proxy
         httpMethod: 'POST'
         credentials:
-          Fn::Sub: '${PlincApiRole.Arn}'
+          Fn::Sub: '${PlincApiDevRole.Arn}'
         uri:
           Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${DeleteItemFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /users:
+    post:
+      summary: Create a user
+      tags:
+        - Users
+      description: Create a user.
+      parameters:
+        - in: body
+          name: user
+          description: user to be created
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        201:
+          description: Created
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateUserFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /search/{clientId}:
+    get:
+      summary: Get users
+      tags:
+        - Users
+      description: Get all users.
+      parameters:
+        - name: clientId
+          in: path
+          description: client id of the user to get users for
+          required: true
+          type: string
+      responses:
+        200:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllUsersFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /user/id:
+    get:
+      summary: Get UserId
+      tags:
+        - Users
+      description: Get user id for the current logged in user.
+      responses:
+        201:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetUserIdFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /users/{id}:
+    get:
+      summary: Get user
+      tags:
+        - Users
+      description: Get an user
+      parameters:
+        - name: id
+          in: path
+          description: id of the user to get
+          required: true
+          type: string
+      responses:
+        200:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetUserFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    put:
+      summary: Update user
+      tags:
+        - Users
+      description: Update a single user
+      parameters:
+        - name: id
+          in: path
+          description: id of the user to get
+          required: true
+          type: string
+        - name: user
+          in: body
+          description: user to be updated
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${UpdateUserFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /downvotes:
+    post:
+      summary: Create a downvote
+      tags:
+        - DownVotes
+      description: Create a downvote for the current logged in user.
+      parameters:
+        - in: body
+          name: downVote
+          description: downVote to be created
+          schema:
+            $ref: '#/definitions/DownVote'
+      responses:
+        201:
+          description: Created
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateDownVoteFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    get:
+      summary: Get downvotes
+      tags:
+        - DownVotes
+      description: Get all downvotes for the current logged in user.
+      responses:
+        201:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllDownVotesFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /downvotes/{id}:
+    delete:
+      summary: Deletes a downVote
+      tags:
+        - DownVotes
+      description: Deletes a downVote.
+      parameters:
+        - name: id
+          in: path
+          description: id of the downVote
+          required: true
+          type: string
+      responses:
+        200:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${DeleteDownVoteFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /follows:
+    post:
+      summary: Create a follow
+      tags:
+        - Follows
+      description: Create a follow for the current logged in user.
+      parameters:
+        - in: body
+          name: follow
+          description: follow to be created
+          schema:
+            $ref: '#/definitions/Follow'
+      responses:
+        201:
+          description: Created
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${CreateFollowFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    get:
+      summary: Get follows
+      tags:
+        - Follows
+      description: Get all follows for the current logged in user.
+      responses:
+        201:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllFollowsFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /follows/{followUser}:
+    get:
+      summary: Get followers
+      tags:
+        - Follows
+      description: Get all followers for the other user.
+      parameters:
+        - name: followUser
+          in: path
+          description: followUser of the follow
+          required: true
+          type: string
+      responses:
+        201:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllFollowersFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+    delete:
+      summary: Deletes a follow
+      tags:
+        - Follows
+      description: Deletes a follow.
+      parameters:
+        - name: followUser
+          in: path
+          description: followUser of the follow
+          required: true
+          type: string
+      responses:
+        200:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${DeleteFollowFunction.Arn}/invocations'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          4\d{2}:
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          5\d{2}:
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'*'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+
+  /follows/otheruser/{possessor}:
+    get:
+      summary: Get follows by other user
+      tags:
+        - Follows
+      description: Get all follows for the other user.
+      parameters:
+        - name: possessor
+          in: path
+          description: possesor of the follow
+          required: true
+          type: string
+      responses:
+        201:
+          description: Found
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+        403:
+          description: Access Denied
+          headers:
+            Access-Control-Allow-Headers:
+              type: 'string'
+            Access-Control-Allow-Methods:
+              type: 'string'
+            Access-Control-Allow-Origin:
+              type: 'string'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - Authorizer: []
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: 'POST'
+        credentials:
+          Fn::Sub: '${PlincApiDevRole.Arn}'
+        uri:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${GetAllFollowsFunction.Arn}/invocations'
         responses:
           default:
             statusCode: '200'

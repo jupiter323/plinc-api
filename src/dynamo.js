@@ -68,6 +68,10 @@ class Dynamo {
   async delete(params) {
     return this.dynamodb.deleteItem(params).promise();
   }
+
+  async scan(params) {
+    return this.dynamodb.scan(params).promise();
+  }
 }
 
 module.exports = Dynamo;
