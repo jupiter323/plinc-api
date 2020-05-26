@@ -659,6 +659,8 @@ Resources:
     Properties:
       Runtime: nodejs10.x
       Handler: src/items/stream.handler
+      MemorySize: 3008
+      Timeout: 600
       CodeUri: ../dist/package
       Policies:
         - !Ref KeyAccessPolicy

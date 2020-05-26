@@ -136,7 +136,7 @@ module.exports.handler = (event, context, callback) => {
         const listId = record.dynamodb.Keys.ListId.S;
         const possessor = record.dynamodb.OldImage.Possessor.S;
         const price = record.dynamodb.OldImage.Price.N;
-
+        console.log('old image :', record.dynamodb.OldImage);
         try {
           await lists.decrement({ possessor, id: listId, price });
         } catch {
