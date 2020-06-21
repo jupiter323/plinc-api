@@ -41,7 +41,7 @@ Parameters:
 
   SwaggerUIBucket:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: /plinc/Foundations/SwaggerBucketName
+    Default: /plinc/Foundations/ApiSwaggerBucketName
 
   UserPoolId:
     Type: AWS::SSM::Parameter::Value<String>
