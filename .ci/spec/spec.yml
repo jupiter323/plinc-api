@@ -1,7 +1,7 @@
 swagger: '2.0'
 
 info:
-  title: Plinc API DEV
+  title: Plinc API
   description: Use this API to retrieve wish lists and items for Plinc.app
   version: 0.0.1
 
